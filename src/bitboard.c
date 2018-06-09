@@ -1,0 +1,312 @@
+#include "bitboard.h"
+#include "mvgen.h"
+#include "utilities.h"
+
+
+U64 gen_rk(U64 bb, int index, bool is_white) {
+	U64 mask = 1;
+	int prev = index % 8;
+	int next = 7 - prev;
+	for (int i = 1; i <= prev; i++) {
+		U64 sq = (mask << (index - i));
+		int occupied = validate_sq(sq, is_white);
+		if (occupied == 0) {
+			break;
+		} else if (occupied == 1) {
+			bb = sq | bb;
+			break;
+		} else if (occupied == 2) {
+			bb = sq | bb;
+		}
+	}
+	for (int i = 1; i <= next; i++) {
+		U64 sq = (mask << (index + i));
+		int occupied = validate_sq(sq, is_white);
+		if (occupied == 0) {
+			break;
+		} else if (occupied == 1) {
+			bb = sq | bb;
+			break;
+		} else if (occupied == 2) {
+			bb = sq | bb;
+		}
+	}
+
+
+	int rank = index / ((U64) 8);
+	prev = rank % 8;                  
+	next = 7 - prev;
+	for (int i = 1; i <= prev; i++) {
+		U64 sq = (mask << (index - (i * 8)));
+		int occupied = validate_sq(sq, is_white);
+		if (occupied == 0) {
+			break;
+		} else if (occupied == 1) {
+			bb = sq | bb;
+			break;
+		} else if (occupied == 2) {
+			bb = sq | bb;
+		}
+	}
+	for (int i = 1; i <= next; i++) {
+		U64 sq = (mask << (index + (i * 8)));
+		int occupied = validate_sq(sq, is_white);
+		if (occupied == 0) {
+			break;
+		} else if (occupied == 1) {
+			bb = sq | bb;
+			break;
+		} else if (occupied == 2) {
+			bb = sq | bb;
+		}
+	}
+	return bb;
+}
+
+U64 gen_bshp(U64 bb, int index, bool is_white) {
+	U64 mask = 1;
+	int rank = index / ((U64) 8);
+	int bottom_dist = rank % 8;
+	int top_dist = 7 - bottom_dist;
+	int ls_dist = index % 8;
+	int rs_dist = 7 - ls_dist;
+
+	int sw = (top_dist < ls_dist) ? top_dist : ls_dist;
+	int se = (top_dist < rs_dist) ? top_dist : rs_dist;
+	int nw = (bottom_dist < ls_dist) ? bottom_dist : ls_dist;
+	int ne = (bottom_dist < rs_dist) ? bottom_dist : rs_dist;
+
+	for (int i = 1; i <= sw; i++) {
+		U64 sq = (mask << (index + (i * 7)));
+		int occupied = validate_sq(sq, is_white);
+		if (occupied == 0) {
+			break;
+		} else if (occupied == 1) {
+			bb = sq | bb;
+			break;
+		} else if (occupied == 2) {
+			bb = sq | bb;
+		}
+
+	}
+	for (int i = 1; i <= se; i++) {
+		U64 sq = (mask << (index + (i * 9)));
+		int occupied = validate_sq(sq, is_white);
+		if (occupied == 0) {
+			break;
+		} else if (occupied == 1) {
+			bb = sq | bb;
+			break;
+		} else if (occupied == 2) {
+			bb = sq | bb;
+		}
+	}
+	for (int i = 1; i <= nw; i++) {
+		U64 sq = (mask << (index - (i * 9)));
+		int occupied = validate_sq(sq, is_white);
+		if (occupied == 0) {
+			break;
+		} else if (occupied == 1) {
+			bb = sq | bb;
+			break;
+		} else if (occupied == 2) {
+			bb = sq | bb;
+		}
+	}
+	for (int i = 1; i <= ne; i++) {
+		U64 sq = (mask << (index - (i * 7)));
+		int occupied = validate_sq(sq, is_white);
+		if (occupied == 0) {
+			break;
+		} else if (occupied == 1) {
+			bb = sq | bb;
+			break;
+		} else if (occupied == 2) {
+			bb = sq | bb;
+		}
+	}
+
+	return bb;
+}
+
+U64 gen_qn(U64 bb, int index, bool is_white) {
+	bb = gen_rk(bb, index, is_white);
+	bb = gen_bshp(bb, index, is_white);
+	return bb;
+}
+
+U64 gen_k(U64 bb, int index, bool is_white) {
+	U64 mask = 1;
+	U64 full = gen_qn(bb, index, is_white);
+	U64 sq1 = (mask << (index - 1));
+	U64 sq2 = (mask << (index + 1));
+	U64 sq3 = (mask << (index - 8));
+	U64 sq4 = (mask << (index + 8));
+	U64 sq5 = (mask << (index - 7));
+	U64 sq6 = (mask << (index + 7));
+	U64 sq7 = (mask << (index - 9));
+	U64 sq8 = (mask << (index + 9));
+	U64 limit = sq1 | sq2 | sq3 | sq4 | sq5 | sq6 | sq7 | sq8 | bb;
+	return (full & limit);
+}
+
+U64 gen_kn(U64 bb, int index, bool is_white) {
+	U64 mask = 1;
+	int rank = index / ((U64) 8);
+	int bottom_dist = rank % 8;
+	int top_dist = 7 - bottom_dist;
+	int ls_dist = index % 8;
+	int rs_dist = 7 - ls_dist;
+
+	U64 bb1 = 0;
+	U64 bb2 = 0;
+	U64 bb3 = 0;
+	U64 bb4 = 0;
+	U64 bb5 = 0;
+	U64 bb6 = 0;
+	U64 bb7 = 0;
+	U64 bb8 = 0;
+	if (top_dist >= 2) {
+		if (ls_dist > 0) {
+			U64 sq = (bb << 15);
+			if (validate_sq(sq, is_white) != 0) {
+				bb1 = sq | bb;
+			}   
+		}
+		if (rs_dist > 0) {
+			U64 sq = (bb << 17);
+			if (validate_sq(sq, is_white) != 0) {
+				bb2 = sq | bb;
+			}
+		}
+	}
+	if (bottom_dist >= 2) {
+		if (ls_dist > 0) {
+			U64 sq = (bb >> 17);
+			if (validate_sq(sq, is_white) != 0) {
+				bb3 = sq | bb;
+			}
+		} 
+		if (rs_dist > 0) {
+			U64 sq = (bb >> 15);
+			if (validate_sq(sq, is_white)!= 0) {
+				bb4= sq | bb;
+			}
+		}
+	}
+	if (rs_dist >= 2) {
+		if (bottom_dist > 0) {
+			U64 sq = (bb >> 6);
+			if (validate_sq(sq, is_white)!= 0) {
+				bb5 = sq | bb;
+			}
+		}
+		if (top_dist > 0) {
+			U64 sq = (bb << 10);
+			if (validate_sq(sq, is_white) != 0) {
+				bb6 = sq | bb;
+			}
+		}
+	}
+	if (ls_dist >= 2) {
+		if (bottom_dist > 0) {
+			U64 sq = (bb >> 10);
+			if (validate_sq(sq, is_white) != 0) {
+				bb7 = sq | bb;
+			}
+		}
+		if (top_dist > 0) {
+			U64 sq = (bb << 6);
+			if (validate_sq(sq, is_white) != 0) {
+				bb8 = sq | bb;
+			}
+		}
+	}
+	bb = bb | bb1 | bb2 | bb3 | bb4 | bb5 | bb6 | bb7 | bb8;
+	return bb;
+}
+
+U64 gen_p_noncapture(U64 bb, int index, bool eligible, bool is_white) {
+	U64 mask = 1;
+	if (is_white) {
+		bb = (mask << (index + 8)) | bb;
+		bb = eligible ? ((mask << (index + 16)) | bb) : bb;
+	} else {
+		bb = (mask << (index - 8)) | bb;
+		bb = eligible ? ((mask << (index - 16)) | bb) : bb;
+	}
+	return bb; 
+}
+
+U64 gen_p_capture(U64 bb, U64 opp, bool is_white) {
+	if (!is_white) {
+		return ((bb >> 7) & opp) | ((bb >> 9) & opp);
+	} else {
+		return ((bb << 7) & opp) | ((bb << 9) & opp);
+	}
+}
+
+U64 gen_mv_piece(U64 piece, int index, bool is_white, piece_t type) {
+	U64 mask = 1;
+	if (piece) {
+		U64 final = 0;
+		switch (type) {
+			case K:
+				{
+					final = gen_k(piece, index, is_white) ^ piece;
+					print_bits(final, true);
+					return final;
+				}
+			case Q:
+				{
+					final = gen_qn(piece, index, is_white) ^ piece;
+					print_bits(final, true);
+					return final;
+				}
+			case Kn:
+				{
+					final = gen_kn(piece, index, is_white) ^ piece;
+					print_bits(final, true);
+					return final;
+				}
+			case R:
+				{
+					final = gen_kn(piece, index, is_white) ^ piece;
+					print_bits(final, true);
+					return final;
+				}
+			case B:
+				{
+					final = gen_bshp(piece, index, is_white) ^ piece;
+					print_bits(final, true);
+					return final;
+				}
+			case P:
+				{
+					int rank = index / 8;
+					bool eligible = (rank == 6 || rank == 1) ? true : false;
+					final = gen_p_noncapture(piece, index, eligible, is_white);
+					if (is_white) {
+						final = final | gen_p_capture(piece, bK, is_white);
+						final = final | gen_p_capture(piece, bR, is_white);
+						final = final | gen_p_capture(piece, bQ, is_white);
+						final = final | gen_p_capture(piece, bKn, is_white);
+						final = final | gen_p_capture(piece, bB, is_white);
+						final = final | gen_p_capture(piece, bP, is_white);
+					} else {
+						final = final | gen_p_capture(piece, wK, is_white);
+						final = final | gen_p_capture(piece, wR, is_white);
+						final = final | gen_p_capture(piece, wQ, is_white);
+						final = final | gen_p_capture(piece, wKn, is_white);
+						final = final | gen_p_capture(piece, wB, is_white);
+						final = final | gen_p_capture(piece, wP, is_white);
+					}
+					final = final ^ piece;
+					print_bits(final, true);
+					return final;
+				}		
+		}
+	}
+}
+
+

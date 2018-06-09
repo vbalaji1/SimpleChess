@@ -1,13 +1,12 @@
 #include "pawn.h"
 
-U64 p_double;
 U64 p_enpassant;
 
-void update_pdouble(U64 bb, int index) {
-	U64 mask = 1;
-	if (index != -1) {
-		p_double = (bb ^ (mask << (index - 1)));
-	}
+void promotion(U64 bb, piece_t type) {
+
 }
 
+U64 gen_enpassant(U64 bb, bool is_white) {
+
+}
 //U64 gen_p_enpassant 

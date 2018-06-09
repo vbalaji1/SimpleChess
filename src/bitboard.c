@@ -2,6 +2,63 @@
 #include "mvgen.h"
 #include "utilities.h"
 
+U64* bb_lookup(bool is_white, piece_t type) {
+	if (is_white) {
+		switch (type) {
+			case P:
+				{
+					return &wP;
+				}
+			case R:
+				{
+					return &wR;
+				}
+			case Kn:
+				{
+					return &wKn;
+				}
+			case B:
+				{
+					return &wB;
+				}
+			case Q:
+				{
+					return &wQ;
+				}
+			case K:
+				{
+					return &wK;
+				}
+		}
+	} else {
+		switch (type) {
+			case P: 
+				{
+					return &bP;
+				}
+			case R:
+				{
+					return &bR;
+				}
+			case Kn:
+				{
+					return &bKn;
+				}
+			case B:
+				{
+					return &bB;
+				}
+			case Q:
+				{
+					return &bQ;
+				}
+			case K:
+				{
+					return &bK;
+				}
+		}
+	}
+}
 
 U64 gen_rk(U64 bb, int index, bool is_white) {
 	U64 mask = 1;
@@ -229,11 +286,27 @@ U64 gen_kn(U64 bb, int index, bool is_white) {
 U64 gen_p_noncapture(U64 bb, int index, bool eligible, bool is_white) {
 	U64 mask = 1;
 	if (is_white) {
-		bb = (mask << (index + 8)) | bb;
-		bb = eligible ? ((mask << (index + 16)) | bb) : bb;
+		U64 sq = (mask << (index + 8));
+		int occupied = validate_sq(sq, is_white);
+		if (occupied == 2) {
+			bb = sq | bb;
+		}
+		sq = (mask << (index + 16));
+		occupied = validate_sq(sq, is_white);
+		if (occupied == 2) {
+			bb = eligible? (sq | bb) : bb;
+		}
 	} else {
-		bb = (mask << (index - 8)) | bb;
-		bb = eligible ? ((mask << (index - 16)) | bb) : bb;
+		U64 sq = (mask << (index - 8));
+		int occupied = validate_sq(sq, is_white);
+		if (occupied == 2) {
+			bb = sq | bb;
+		}
+		sq = (mask << (index - 16));
+		occupied = validate_sq(sq, is_white);
+		if (occupied == 2) {
+			bb = eligible ? (sq | bb) : bb;
+		}
 	}
 	return bb; 
 }
@@ -254,31 +327,31 @@ U64 gen_mv_piece(U64 piece, int index, bool is_white, piece_t type) {
 			case K:
 				{
 					final = gen_k(piece, index, is_white) ^ piece;
-					print_bits(final, true);
+					//print_bits(final, true);
 					return final;
 				}
 			case Q:
 				{
 					final = gen_qn(piece, index, is_white) ^ piece;
-					print_bits(final, true);
+					//print_bits(final, true);
 					return final;
 				}
 			case Kn:
 				{
 					final = gen_kn(piece, index, is_white) ^ piece;
-					print_bits(final, true);
+					//print_bits(final, true);
 					return final;
 				}
 			case R:
 				{
-					final = gen_kn(piece, index, is_white) ^ piece;
-					print_bits(final, true);
+					final = gen_rk(piece, index, is_white) ^ piece;
+					//print_bits(final, true);
 					return final;
 				}
 			case B:
 				{
 					final = gen_bshp(piece, index, is_white) ^ piece;
-					print_bits(final, true);
+					//print_bits(final, true);
 					return final;
 				}
 			case P:
@@ -302,7 +375,7 @@ U64 gen_mv_piece(U64 piece, int index, bool is_white, piece_t type) {
 						final = final | gen_p_capture(piece, wP, is_white);
 					}
 					final = final ^ piece;
-					print_bits(final, true);
+					//print_bits(final, true);
 					return final;
 				}		
 		}

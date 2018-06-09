@@ -1,10 +1,5 @@
-#ifndef PAWN_H
-#define PAWN_H
-
-#include "utilities.h"
-#include "bitboard.h"
-
-extern U64 p_enpassant;
+#ifndef STATE_H
+#define STATE_H
 
 extern U64 wP;
 extern U64 wR;
@@ -20,7 +15,5 @@ extern U64 bB;
 extern U64 bQ;
 extern U64 bK;
 
-void promotion(U64 bb, piece_t piece);
-U64 gen_enpassant(U64 bb, bool is_white);
-
+bool chk_mate();
 #endif

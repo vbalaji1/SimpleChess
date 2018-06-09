@@ -17,6 +17,8 @@ extern U64 bB;
 extern U64 bQ;
 extern U64 bK;
 
+U64* bb_lookup(bool is_white, piece_t type);
+U64 gen_p_capture(U64 bb, U64 opp, bool is_white);
 U64 gen_mv_piece(U64 piece, int index, bool is_white, piece_t type);
 
 #endif

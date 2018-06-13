@@ -164,15 +164,17 @@ U64 chk_self_legality(U64 move, int index, bool is_white, piece_t type) {
 	return move;
 }
 
-void gen_all_moves(U64 bb, bool is_white, piece_t type) {
+Vector *gen_all_moves(U64 bb, bool is_white, piece_t type, Vector *v) {
 	U64 mask = 1;
 	for (int i = 0; i < 64; i++) {
 		U64 piece = (bb & (mask << i));
 		if (piece) {
 			U64 move = gen_mv_piece(piece, i, is_white, type);
 			move = chk_self_legality(move, i, is_white, type);
+			add(v, move);
 			printf("\nTrimmed moves:");
 			print_bits(move, true);
 		}
 	}
+	return v;
 }

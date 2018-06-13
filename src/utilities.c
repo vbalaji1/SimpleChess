@@ -12,3 +12,24 @@ void print_bits(U64 n, bool gridwise) {
 	}
     printf("\n");
 }
+
+void init_vector(Vector *v) {
+	v->elements = (U64 *) malloc(sizeof(U64) * 10);
+	v->size = 0;
+	v->max_capacity = 10;
+}
+
+void add(Vector *v, U64 element) {
+	if (v->size == v->max_capacity) {
+		v->max_capacity *= 2;
+		v->elements = (U64 *) realloc(v->elements, v->size * sizeof(U64));
+	} 
+	v->elements[v->size++] = element;
+}
+
+void clean_vector(Vector *v) {
+	free(v->elements);
+	v->elements = NULL;
+	v->size = 0;
+	v->max_capacity = 0;
+}

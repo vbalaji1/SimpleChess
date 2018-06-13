@@ -2,7 +2,7 @@
 #include "mvgen.h"
 #include "utilities.h"
 
-U64* bb_lookup(bool is_white, piece_t type) {
+U64 *bb_lookup(bool is_white, piece_t type) {
 	if (is_white) {
 		switch (type) {
 			case P:
@@ -294,7 +294,7 @@ U64 gen_p_noncapture(U64 bb, int index, bool eligible, bool is_white) {
 		sq = (mask << (index + 16));
 		occupied = validate_sq(sq, is_white);
 		if (occupied == 2) {
-			bb = eligible? (sq | bb) : bb;
+			bb = eligible ? (sq | bb) : bb;
 		}
 	} else {
 		U64 sq = (mask << (index - 8));
@@ -316,6 +316,44 @@ U64 gen_p_capture(U64 bb, U64 opp, bool is_white) {
 		return ((bb >> 7) & opp) | ((bb >> 9) & opp);
 	} else {
 		return ((bb << 7) & opp) | ((bb << 9) & opp);
+	}
+}
+
+U64 castle(U64 bb, bool is_white) {
+	if (validate_sq(wK << 1, is_white) != 2) {
+		return ((U64) 0);
+	}
+	if (validate_sq(wK << 2, is_white) != 2) {
+		return ((U64) 0);
+	}
+
+	U64 *p = bb_lookup(is_white, P);
+	U64 *rk = bb_lookup(is_white, R);
+	U64 *bshp = bb_lookup(is_white, B);
+	U64 *kn = bb_lookup(is_white, Kn);
+	U64 *q = bb_lookup(is_white, Q);
+	U64 *k = bb_lookup(is_white, K);
+
+	if (is_white) {
+		U64 mask = 1;
+		U64 atk = 0;
+		for (int i = 0; i < 64; i++) {
+			U64 piece = (*rk & (mask << i));
+			if (piece) {
+				atk = gen_mv_piece(piece, i, is_white, R);
+				if (((atk & (wK << 1)) || (atk & (wK << 2)))) {
+					return ((U64) 0);
+				}
+			}
+			piece = (*bshp & (mask << i));
+			if (piece) {
+				atk = gen_mv_piece(piece, i, is_white, B);
+				if (((atk & (wK << 1)) || (atk & (wK << 2)))) {
+					return ((U64) 0);
+				}
+			}
+		}
+
 	}
 }
 
@@ -381,5 +419,6 @@ U64 gen_mv_piece(U64 piece, int index, bool is_white, piece_t type) {
 		}
 	}
 }
+
 
 

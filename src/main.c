@@ -2,6 +2,7 @@
 #include "utilities.h"
 #include "pawn.h"
 #include "mvgen.h"
+#include "state.h"
 
 U64 wP;
 U64 wR;
@@ -17,30 +18,32 @@ U64 bB;
 U64 bQ;
 U64 bK;
 
+bool k_castle;
+bool q_castle;
 
 U64 wRtest;
 U64 a1_h8diag;
 
 //LITTLE-ENDIAN RANK-FILE MAPPING
 void init_bitboards() {
-	wP = 0x000000000000EF00;
-	//wP = 0x000000000000FF00;
+	//wP = 0x0000006000009F00;
+	wP = 0x000000000000FF00;
 	wR = 0x0000000000000081;
 	wKn = 0x0000000000000042;
 	wB = 0x0000000000000024;
-	//wQ = 0x0000000000000008;
-	wQ = 0x0000000000001000;
+	wQ = 0x0000000000000008;
 	wK = 0x0000000000000010;
 	bP = 0x00FF000000000000;
-	//bR = 0x8100000000000000;
-	bR = 0x0000001000000000;
+	bR = 0x8100000000000000;
 	bKn = 0x4200000000000000;
 	bB = 0x2400000000000000;
+	//bQ = 0x0000000080000000;
 	bQ = 0x0800000000000000;
 	bK = 0x1000000000000000;
 
-	wRtest = 0x0000040000000000; 
 
+
+	wRtest = 0x0000000000000001;
 
 	a1_h8diag = 0x8040201008040201;
 
@@ -61,9 +64,6 @@ int main() {
 	//print_bits(bB, true);
 	//print_bits(bQ, true);
 	//print_bits(bK, true);
-	print_bits(wP, true);
-	print_bits(wQ, true);
-	print_bits(bR, true);
-	print_bits(bP, true);
-	gen_all_moves(wQ, true, Q);
+	print_bits(wK << 1, true);
+	//printf("%s\n", chk_mate(true) ? "true" : "false");
 }

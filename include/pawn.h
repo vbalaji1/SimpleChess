@@ -20,7 +20,7 @@ extern U64 bB;
 extern U64 bQ;
 extern U64 bK;
 
-void promotion(U64 bb, piece_t piece);
+void promotion(int index, bool is_white, piece_t promoted_type);
 U64 gen_enpassant(U64 bb, bool is_white);
 
 #endif

@@ -64,6 +64,11 @@ int main() {
 	//print_bits(bB, true);
 	//print_bits(bQ, true);
 	//print_bits(bK, true);
-	print_bits(wK << 1, true);
+	bB = 0;
+	bQ = 0;
+	Vector *v = gen_q_castle(false);
+	for (int i = 0; i < (v->size); i++) {
+		print_bits(v->elements[i], true);
+	}
 	//printf("%s\n", chk_mate(true) ? "true" : "false");
 }

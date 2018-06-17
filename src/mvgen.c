@@ -30,7 +30,7 @@ bool update_capture(U64 bb, bool is_white) {
 	U64 *bshp = bb_lookup(!is_white, B);
 	U64 *kn = bb_lookup(!is_white, Kn);
 	U64 *q = bb_lookup(!is_white, Q);
-	U64 *k = bb_lookup(!is_white, K);
+	
 	U64 mask = 1;
 	if (bb & *p) {
 		for (int i = 0; i < 64; i++) {
@@ -171,9 +171,9 @@ Vector *gen_all_moves(U64 bb, bool is_white, piece_t type, Vector *v) {
 		if (piece) {
 			U64 move = gen_mv_piece(piece, i, is_white, type);
 			move = chk_self_legality(move, i, is_white, type);
-			add(v, move);
-			printf("\nTrimmed moves:");
-			print_bits(move, true);
+			add(v, move, i);
+			//printf("\nTrimmed moves:");
+			//print_bits(move, true);
 		}
 	}
 	return v;

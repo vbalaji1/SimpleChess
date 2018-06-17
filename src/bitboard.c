@@ -60,6 +60,22 @@ U64 *bb_lookup(bool is_white, piece_t type) {
 	}
 }
 
+bool can_castle(bool k_side, bool is_white) {
+	if (is_white) {
+		if (k_side) {
+			return wk_castle;
+		} else {
+			return wq_castle;
+		}
+	} else {
+		if (k_side) {
+			return bk_castle;
+		} else {
+			return bq_castle;
+		}
+	}
+}
+
 U64 gen_rk(U64 bb, int index, bool is_white) {
 	U64 mask = 1;
 	int prev = index % 8;
@@ -88,7 +104,6 @@ U64 gen_rk(U64 bb, int index, bool is_white) {
 			bb = sq | bb;
 		}
 	}
-
 
 	int rank = index / ((U64) 8);
 	prev = rank % 8;                  
@@ -338,11 +353,11 @@ Vector *gen_k_castle(bool is_white) {
 	init_vector(v);
 
 	if (validate_sq(king << 1, is_white) != 2) {
-		add(v, ((U64) 0));
+		add(v, ((U64) 0), -1);
 		return v;
 	}
 	if (validate_sq(king << 2, is_white) != 2) {
-		add(v, ((U64) 0));
+		add(v, ((U64) 0), -1);
 		return v;
 	}
 
@@ -351,7 +366,7 @@ Vector *gen_k_castle(bool is_white) {
 		if (piece) {
 			atk = gen_mv_piece(piece, i, !is_white, R);
 			if (((atk & (king << 1)) || (atk & (king << 2)))) {
-				add(v, ((U64) 0));
+				add(v, ((U64) 0), -1);
 				return v;
 			}
 		}
@@ -359,7 +374,7 @@ Vector *gen_k_castle(bool is_white) {
 		if (piece) {
 			atk = gen_mv_piece(piece, i, !is_white, B);
 			if (((atk & (king << 1)) || (atk & (king << 2)))) {
-				add(v, ((U64) 0));
+				add(v, ((U64) 0), -1);
 				return v;
 			}
 		}
@@ -367,7 +382,7 @@ Vector *gen_k_castle(bool is_white) {
 		if (piece) {
 			atk = gen_mv_piece(piece, i, !is_white, Kn);
 			if (((atk & (king << 1)) || (atk & (king << 2)))) {
-				add(v, ((U64) 0));
+				add(v, ((U64) 0), -1);
 				return v;
 			}
 		}
@@ -375,7 +390,7 @@ Vector *gen_k_castle(bool is_white) {
 		if (piece) {
 			atk = gen_mv_piece(piece, i, !is_white, Q);
 			if (((atk & (king << 1)) || (atk & (king << 2)))) {
-				add(v, ((U64) 0));
+				add(v, ((U64) 0), -1);
 				return v;
 			}
 		}
@@ -383,20 +398,24 @@ Vector *gen_k_castle(bool is_white) {
 		if (piece) {
 			atk = gen_mv_piece(piece, i, !is_white, K);
 			if (((atk & (king << 1)) || (atk & (king << 2)))) {
-				add(v, ((U64) 0));
+				add(v, ((U64) 0), -1);
 				return v;
 			}
 		}
 	}
-	add(v, king << 2);
+	if (is_white) {
+		add(v, king << 2, 4);
+	} else {
+		add(v, king << 2, 60);
+	}
 	if (is_white) {
 		rook &= ~(mask << 7);
 		rook |= mask << 5;
-		add(v, rook);
-	} else {
+		add(v, rook, 7);
+	} else { 
 		rook &= ~(mask << 63);
 		rook |= mask << 61;
-		add(v, rook);
+		add(v, rook, 63);
 	}
 	return v;
 }
@@ -420,32 +439,31 @@ Vector *gen_q_castle(bool is_white) {
 	init_vector(v);
 
 	if (validate_sq(king >> 1, is_white) != 2) {
-		add(v, ((U64) 0));
+		add(v, ((U64) 0), -1);
 		return v;
 	}
 	if (validate_sq(king >> 2, is_white) != 2) {
-		add(v, ((U64) 0));
+		add(v, ((U64) 0), -1);
 		return v; 
 	}
 	if (is_white) {
 		if (validate_sq((rook & mask) << 1, is_white) != 2) {
-			add(v, ((U64) 0));
+			add(v, ((U64) 0), -1);
 			return v;
 		}
 	} else {
 		if (validate_sq((rook & (mask << 56)) << 1, is_white) != 2) {
-			add(v, ((U64) 0));
+			add(v, ((U64) 0), -1);
 			return v;
 		} 
 	}
 	
-
 	for (int i = 0; i < 64; i++) {
 		U64 piece = (*rk & (mask << i));
 		if (piece) {
 			atk = gen_mv_piece(piece, i, !is_white, R);
 			if (((atk & (king >> 1)) || (atk & (king >> 2)))) {
-				add(v, ((U64) 0));
+				add(v, ((U64) 0), -1);
 				return v;
 			}
 		}
@@ -453,7 +471,7 @@ Vector *gen_q_castle(bool is_white) {
 		if (piece) {
 			atk = gen_mv_piece(piece, i, !is_white, B);
 			if (((atk & (king >> 1)) || (atk & (king >> 2)))) {
-				add(v, ((U64) 0));
+				add(v, ((U64) 0), -1);
 				return v;
 			}
 		}
@@ -461,7 +479,7 @@ Vector *gen_q_castle(bool is_white) {
 		if (piece) {
 			atk = gen_mv_piece(piece, i, !is_white, Kn);
 			if (((atk & (king >> 1)) || (atk & (king >> 2)))) {
-				add(v, ((U64) 0));
+				add(v, ((U64) 0), -1);
 				return v;
 			}
 		}
@@ -469,7 +487,7 @@ Vector *gen_q_castle(bool is_white) {
 		if (piece) {
 			atk = gen_mv_piece(piece, i, !is_white, Q);
 			if (((atk & (king >> 1)) || (atk & (king >> 2)))) {
-				add(v, ((U64) 0));
+				add(v, ((U64) 0), -1);
 				return v;
 			}
 		}
@@ -477,20 +495,24 @@ Vector *gen_q_castle(bool is_white) {
 		if (piece) {
 			atk = gen_mv_piece(piece, i, !is_white, K);
 			if (((atk & (king >> 1)) || (atk & (king >> 2)))) {
-				add(v, ((U64) 0));
+				add(v, ((U64) 0), -1);
 				return v;
 			}
 		}
 	}
-	add(v, king >> 2);
+	if (is_white) {
+		add(v, king >> 2, 4);
+	} else {
+		add(v, king >> 2, 60);
+	}
 	if (is_white) {
 		rook &= ~(mask);
 		rook |= mask << 3;
-		add(v, rook);
+		add(v, rook, 0);
 	} else {
 		rook &= ~(mask << 56);
 		rook |= mask << 59;
-		add(v, rook);
+		add(v, rook, 56);
 	}
 	return v;
 } 
@@ -503,31 +525,26 @@ U64 gen_mv_piece(U64 piece, int index, bool is_white, piece_t type) {
 			case K:
 				{
 					final = gen_k(piece, index, is_white) ^ piece;
-					//print_bits(final, true);
 					return final;
 				}
 			case Q:
 				{
 					final = gen_qn(piece, index, is_white) ^ piece;
-					//print_bits(final, true);
 					return final;
 				}
 			case Kn:
 				{
 					final = gen_kn(piece, index, is_white) ^ piece;
-					//print_bits(final, true);
 					return final;
 				}
 			case R:
 				{
 					final = gen_rk(piece, index, is_white) ^ piece;
-					//print_bits(final, true);
 					return final;
 				}
 			case B:
 				{
 					final = gen_bshp(piece, index, is_white) ^ piece;
-					//print_bits(final, true);
 					return final;
 				}
 			case P:
@@ -551,7 +568,6 @@ U64 gen_mv_piece(U64 piece, int index, bool is_white, piece_t type) {
 						final = final | gen_p_capture(piece, wP, is_white);
 					}
 					final = final ^ piece;
-					//print_bits(final, true);
 					return final;
 				}		
 		}

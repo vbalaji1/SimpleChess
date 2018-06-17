@@ -17,10 +17,13 @@ extern U64 bB;
 extern U64 bQ;
 extern U64 bK;
 
-extern bool k_castle;
-extern bool q_castle;
+extern bool wk_castle;
+extern bool wq_castle;
+extern bool bk_castle;
+extern bool bq_castle;
 
 U64 *bb_lookup(bool is_white, piece_t type);
+bool can_castle(bool k_side, bool is_white);
 U64 gen_p_capture(U64 bb, U64 opp, bool is_white);
 Vector *gen_k_castle(bool is_white);
 Vector *gen_q_castle(bool is_white);

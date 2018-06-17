@@ -15,5 +15,10 @@ extern U64 bB;
 extern U64 bQ;
 extern U64 bK;
 
-bool chk_mate();
+extern U64 p_enpassant;
+
+bool chk_mate(bool is_white);
+void mk_move(U64 bb, int index, bool is_white, piece_t piece);
+void input_move(char *mv, bool is_white);
+
 #endif

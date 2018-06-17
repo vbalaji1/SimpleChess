@@ -3,6 +3,7 @@
 #include "pawn.h"
 #include "mvgen.h"
 #include "state.h"
+#include "evaluate.h"
 
 U64 wP;
 U64 wR;
@@ -18,8 +19,10 @@ U64 bB;
 U64 bQ;
 U64 bK;
 
-bool k_castle;
-bool q_castle;
+bool wk_castle;
+bool wq_castle;
+bool bk_castle;
+bool bq_castle;
 
 U64 wRtest;
 U64 a1_h8diag;
@@ -40,6 +43,10 @@ void init_bitboards() {
 	//bQ = 0x0000000080000000;
 	bQ = 0x0800000000000000;
 	bK = 0x1000000000000000;
+	wk_castle = true;
+	wq_castle = true;
+	bk_castle = true;
+	bq_castle = true;
 
 
 
@@ -64,11 +71,10 @@ int main() {
 	//print_bits(bB, true);
 	//print_bits(bQ, true);
 	//print_bits(bK, true);
-	bB = 0;
-	bQ = 0;
-	Vector *v = gen_q_castle(false);
-	for (int i = 0; i < (v->size); i++) {
-		print_bits(v->elements[i], true);
-	}
+	bP = 0x0000000040000000;
+	input_move("h4", true);
+	print_bits(bP, true);
+	print_bits(wP, true);
+	print_bits(gen_enpassant(bP, false), true);
 	//printf("%s\n", chk_mate(true) ? "true" : "false");
 }

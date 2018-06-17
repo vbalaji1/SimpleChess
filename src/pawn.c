@@ -29,7 +29,7 @@ U64 gen_enpassant(U64 bb, bool is_white) {
 			if (validate_sq(bb << 9, true) == 2) {
 				return bb << 9;
 			}
-		} else if (index % 7 == 0 && diff == 1) {
+		} else if (index % 8 == 7 && diff == 1) {
 			if (validate_sq(bb << 7, true) == 2) {
 				return bb << 7;
 			}
@@ -51,7 +51,7 @@ U64 gen_enpassant(U64 bb, bool is_white) {
 			if (validate_sq(bb >> 7, false) == 2) {
 				return bb >> 7;
 			}
-		} else if (index % 7 == 0 && diff == 1) {
+		} else if (index % 8 == 7 && diff == 1) {
 			if (validate_sq(bb >> 9, false) == 2) {
 				return bb >> 9;
 			}

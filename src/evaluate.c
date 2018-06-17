@@ -47,6 +47,7 @@ double center_control(bool is_white) {
 	U64 *k = bb_lookup(is_white, K);
 
 	U64 center = 0x0000001818000000;
+	U64 mask = 1;
 	Vector *v = (Vector *) malloc(sizeof(Vector));
 	init_vector(v);
 	v = gen_all_moves(*p, is_white, P, v);
@@ -55,13 +56,41 @@ double center_control(bool is_white) {
 	v = gen_all_moves(*kn, is_white, Kn, v);
 	v = gen_all_moves(*q, is_white, Q, v);
 	v = gen_all_moves(*k, is_white, K, v);
-
-	U64 bb;
 	size_t score = 0;
+	if (is_white) {
+		for (int i = 0; i < 64; i++) {
+			U64 piece = (*p & (mask << i));
+			if (piece) {
+				printf("%d\n", i);
+				if (i % 8 == 0) {
+					score += __builtin_popcountl((*p << 7) & center);
+				} else if (i % 8 == 7) {
+					score += __builtin_popcountl((*p << 9) & center);
+				} else {
+					score += __builtin_popcountl((*p << 7) & center);
+					score += __builtin_popcountl((*p << 9) & center);
+				}
+			}
+		}
+	} else {
+		for (int i = 0; i < 64; i++) {
+			U64 piece = (*p & (mask << i));
+			if (piece) {
+				if (i % 8 == 0) {
+					score += __builtin_popcountl((*p >> 9) & center);
+				} else if (i % 8 == 7) {
+					score += __builtin_popcountl((*p >> 7) & center);
+				} else {
+					score += __builtin_popcountl((*p >> 9) & center);
+					score += __builtin_popcountl((*p >> 7) & center);
+					//printf("%d\n", score);
+				}
+			}
+		}
+	}
 	for (int i = 0; i < (v->size); i++) {
-		bb = v->elements[i];
+		U64 bb = v->elements[i];
 		score += __builtin_popcountl(bb & center);
-		printf("%d\n", score);
 	}
 	clean_vector(v);
 	free(v);

@@ -31,8 +31,28 @@ bool chk_mate(bool is_white) {
 	return true;
 }
 
-void chk_pcapture(U64 mv, int dest_index, bool is_white, bool enp) {
-
+bool chk_enp(U64 mv, int dest_index, bool is_white) {
+	U64 mask = 1;
+	U64 *p = bb_lookup(!is_white, P);
+	if (validate_sq(mv, is_white) == 2) {
+		if (is_white) {
+			if ((mv >> 8) & *p) {
+				dest_index -= 8;
+				*p &= ~(mask << dest_index);
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			if ((mv << 8) & *p) {
+				dest_index += 8;
+				*p &= ~(mask << dest_index);
+				return true;
+			} else {
+				return false;
+			}
+		}
+	}
 }
 
 void mk_move(U64 mv, int index, bool is_white, piece_t piece) {
@@ -76,7 +96,7 @@ void mk_move(U64 mv, int index, bool is_white, piece_t piece) {
 		bq_castle = false;
 	}
 
-	if (piece != P) {
+	if (!chk_enp(mv, dest_index, is_white)) {
 		if (*p & mv) {
 			*p &= ~(mask << dest_index);
 		} else if (*rk & mv) {
@@ -88,8 +108,6 @@ void mk_move(U64 mv, int index, bool is_white, piece_t piece) {
 		} else if (*q & mv) {
 			*q &= ~(mask << dest_index);
 		}
-	} else {
-		chk_pcapture(mv, dest_index, is_white);
 	}
 
 }

@@ -18,6 +18,7 @@ extern U64 bK;
 extern U64 p_enpassant;
 
 bool chk_mate(bool is_white);
+bool chk_enp(U64 mv, int dest_index, bool is_white);
 void mk_move(U64 bb, int index, bool is_white, piece_t piece);
 void input_move(char *mv, bool is_white);
 

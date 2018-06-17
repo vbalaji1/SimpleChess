@@ -75,6 +75,5 @@ int main() {
 	input_move("h4", true);
 	print_bits(bP, true);
 	print_bits(wP, true);
-	print_bits(gen_enpassant(bP, false), true);
 	//printf("%s\n", chk_mate(true) ? "true" : "false");
 }

@@ -327,10 +327,44 @@ U64 gen_p_noncapture(U64 bb, int index, bool eligible, bool is_white) {
 }
 
 U64 gen_p_capture(U64 bb, U64 opp, bool is_white) {
-	if (!is_white) {
-		return ((bb >> 7) & opp) | ((bb >> 9) & opp);
+	int index = __builtin_ffsl(bb) - 1;
+	if (is_white) {
+		if (index % 8 == 0) {
+			return ((bb << 9) & opp);
+		} else if (index % 8 == 7) {
+			return ((bb << 7) & opp);
+		} else if ((validate_sq(bb << 7, true) != 0) && (validate_sq(bb << 9, true) != 0)) {
+			return (((bb << 7) & opp) | ((bb << 9) & opp));
+		}
 	} else {
-		return ((bb << 7) & opp) | ((bb << 9) & opp);
+		if (index % 8 == 0) {
+			return ((bb >> 7) & opp);
+		} else if (index % 8 == 7) {
+			return ((bb >> 9) & opp);
+		} else if ((validate_sq(bb >> 7, false) != 0) && (validate_sq(bb >> 9, false) != 0)) {
+			return (((bb >> 7) & opp) | ((bb >> 9) & opp));
+		}
+	}
+}
+
+U64 gen_p_atks(U64 bb, bool is_white) {
+	int index = __builtin_ffsl(bb) - 1;
+	if (is_white) {
+		if (index % 8 == 0) {
+			return (bb << 9);
+		} else if (index % 8 == 7) {
+			return (bb << 7);
+		} else if ((validate_sq(bb << 7, true) != 0) && (validate_sq(bb << 9, true) != 0)) {
+			return ((bb << 7) | (bb << 9));
+		}
+	} else {
+		if (index % 8 == 0) {
+			return (bb >> 7);
+		} else if (index % 8 == 7) {
+			return (bb >> 9);
+		} else if ((validate_sq(bb >> 7, false) != 0) && (validate_sq(bb >> 9, false) != 0)) {
+			return ((bb >> 7) | (bb >> 9));
+		}
 	}
 }
 

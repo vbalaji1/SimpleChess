@@ -25,6 +25,7 @@ extern bool bq_castle;
 U64 *bb_lookup(bool is_white, piece_t type);
 bool can_castle(bool k_side, bool is_white);
 U64 gen_p_capture(U64 bb, U64 opp, bool is_white);
+U64 gen_p_atks(U64 bb, bool is_white);
 Vector *gen_k_castle(bool is_white);
 Vector *gen_q_castle(bool is_white);
 U64 gen_mv_piece(U64 piece, int index, bool is_white, piece_t type);

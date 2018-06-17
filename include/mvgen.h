@@ -20,5 +20,6 @@ extern U64 bK;
 int validate_sq(U64 bb, bool is_white);
 U64 chk_self_legality(U64 move, int index, bool is_white, piece_t type);
 Vector *gen_all_moves(U64 bb, bool is_white, piece_t type, Vector *v);
+Vector *gen_all_patks(U64 bb, bool is_white, Vector *v);
 
 #endif

@@ -71,9 +71,6 @@ int main() {
 	//print_bits(bB, true);
 	//print_bits(bQ, true);
 	//print_bits(bK, true);
-	bP = 0x0000000040000000;
-	input_move("h4", true);
-	print_bits(bP, true);
-	print_bits(wP, true);
+	printf("%f\n", center_control(true));
 	//printf("%s\n", chk_mate(true) ? "true" : "false");
 }

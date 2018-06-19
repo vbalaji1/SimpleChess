@@ -95,7 +95,7 @@ U64 chk_self_legality(U64 move, int index, bool is_white, piece_t type) {
 			U64 copy = *piece_bb;
 			*piece_bb &= ~(mask << index);
 			*piece_bb |= piece;
-			bool captured = update_capture(*piece_bb, is_white);
+			bool captured = update_capture(piece, is_white);
 
 			U64 p = *(bb_lookup(!is_white, P));
 			U64 rk = *(bb_lookup(!is_white, R));
@@ -171,7 +171,7 @@ Vector *gen_all_moves(U64 bb, bool is_white, piece_t type, Vector *v) {
 		if (piece) {
 			U64 move = gen_mv_piece(piece, i, is_white, type);
 			move = chk_self_legality(move, i, is_white, type);
-			add(v, move, i);
+			add(v, move, i, type);
 		}
 	}
 	return v;
@@ -184,7 +184,7 @@ Vector *gen_all_patks(U64 bb, bool is_white, Vector *v) {
 		if (piece) {
 			U64 move = gen_p_atks(piece, is_white);
 			move = chk_self_legality(move, i, is_white, P);
-			add(v, move, i);
+			add(v, move, i, P);
 		}
 	}
 	return v;

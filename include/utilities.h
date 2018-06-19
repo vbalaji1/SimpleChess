@@ -25,11 +25,12 @@ typedef struct vector {
 	size_t size;
 	size_t max_capacity;
 	int *origin;
+	piece_t* piece; 
 } Vector;
 
 void print_bits(U64 n, bool gridwise);
 void init_vector(Vector *v);
-void add(Vector *v, U64 element, int origin);
+void add(Vector *v, U64 element, int origin, piece_t type);
 void clean_vector(Vector *v);
 
 #endif

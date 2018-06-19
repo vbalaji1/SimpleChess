@@ -18,16 +18,19 @@ void init_vector(Vector *v) {
 	v->size = 0;
 	v->max_capacity = 10;
 	v->origin = (int *) malloc(sizeof(int) * 10);
+	v->piece = (piece_t *) malloc(sizeof(piece_t) * 10);
 }
 
-void add(Vector *v, U64 element, int origin) {
+void add(Vector *v, U64 element, int origin, piece_t type) {
 	if (v->size == v->max_capacity) {
 		v->max_capacity *= 2;
 		v->elements = (U64 *) realloc(v->elements, v->max_capacity * sizeof(U64));
 		v->origin = (int *) realloc(v->origin, v->max_capacity * sizeof(int));
+		v->piece = (piece_t *) realloc(v->piece, v->max_capacity * sizeof(piece_t));
 	} 
 	v->elements[v->size] = element;
-	v->origin[v->size++] = origin;
+	v->origin[v->size] = origin;
+	v->piece[v->size++] = type;
 }
 
 void clean_vector(Vector *v) {
@@ -37,4 +40,6 @@ void clean_vector(Vector *v) {
 	v->max_capacity = 0;
 	free(v->origin);
 	v->origin = NULL;
+	free(v->piece);
+	v->piece = NULL;
 }

@@ -55,6 +55,8 @@ bool chk_enp(U64 mv, int dest_index, bool is_white) {
 	}
 }
 
+//default Queen Promotion 
+
 void mk_move(U64 mv, int index, bool is_white, piece_t piece) {
 	U64 *update = bb_lookup(is_white, piece);
 
@@ -74,8 +76,21 @@ void mk_move(U64 mv, int index, bool is_white, piece_t piece) {
 		}
 	}
 
+	if (piece == P) {
+		if (is_white && (dest_index >= 56)) {
+			promotion(index, is_white, Q);
+			return;
+		} else if (!is_white && (dest_index <= 7)) {
+			promotion(index, is_white, Q);
+			return;
+		}
+	}
+
+
 	*update &= ~(mask << index);
 	*update |= mv;
+	//print_bits(*update, true);
+	//printf(" PIECE %d\n", piece);
 
 	int diff = dest_index - index;
 	if (piece == P && (diff = 16 || diff == -16)) {
@@ -188,6 +203,10 @@ void input_move(char *mv, bool is_white) {
 	size_t len = strlen(mv);
 	int index;
 	piece_t piece;
+	bool disambiguate = false;
+	char dis;
+	bool col;
+	int id;
 	U64 mask = 1;
 	if (len == 2) {
 		char first = mv[0];
@@ -210,6 +229,25 @@ void input_move(char *mv, bool is_white) {
 		} else if (first == 'K') {
 			piece = K;
 		}
+	} else if (len == 4) {
+		disambiguate = true;
+		char first = mv[0];
+		char second = mv[1];
+		char third = mv[2];
+		char fourth = mv[3];
+		dis = second;
+		index = sq_to_index(third, fourth);
+		if (first == 'Q') {
+			piece = Q;
+		} else if (first == 'B') {
+			piece = B;
+		} else if (first == 'N') {
+			piece = Kn;
+		} else if (first == 'R') {
+			piece = R;
+		} else if (first == 'K') {
+			piece = K;
+		} 
 	}
 	U64 dest = 0;
 	dest |= mask << index;
@@ -217,14 +255,42 @@ void input_move(char *mv, bool is_white) {
 	v = gen_all_moves(*piece_to_mv, is_white, piece, v);
 	U64 bb;
 	U64 move;
+	if (dis == '1' || dis == '2' || dis == '3' || dis == '4' || dis == '5'
+		|| dis == '6' || dis == '7' || dis == '8') {
+		id = atoi(&dis) - 1;
+		col = false;
+	} else if (dis == 'a' || dis == 'b' || dis == 'c' || dis == 'd'
+		|| dis == 'e' || dis == 'f' || dis == 'g' || dis == 'h') {
+		id = dis - 'a';
+		col = true;
+	}
 	for (int i = 0; i < (v->size); i++) {
 		bb = v->elements[i];
 		move = (bb >> index) & mask;
 		if (move) {
-			mk_move(dest, v->origin[i], is_white, piece);
-			clean_vector(v);
-			free(v);
-			return;
+			if (disambiguate) {
+				if (col) {
+					if (v->origin[i] % 8 == id) {
+						mk_move(dest, v->origin[i], is_white, piece);
+						clean_vector(v);
+						free(v);
+						return;
+					} 
+				} else {
+					printf("%d\n", id);
+					if (v->origin[i] / 8 == id) {
+						mk_move(dest, v->origin[i], is_white, piece);
+						clean_vector(v);
+						free(v);
+						return;
+					}
+				}
+			} else {
+				mk_move(dest, v->origin[i], is_white, piece);
+				clean_vector(v);
+				free(v); 
+				return;
+			}
 		}
 	}
 }

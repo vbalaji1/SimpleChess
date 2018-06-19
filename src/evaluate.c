@@ -1,6 +1,7 @@
 #include "bitboard.h"
 #include "mvgen.h"
 #include "utilities.h"
+#include "state.h"
 
 
 const double P_SCORE = 1;
@@ -177,5 +178,10 @@ double mobility_score(bool is_white) {
 }
 
 double total_score(bool is_white) {
-	return material_score(is_white) + 0.1 * center_score(is_white) + 0.5 * mobility_score(is_white);
+	double endgame = -20000.0;
+	double total = material_score(is_white) + 0.1 * center_score(is_white);
+	if (chk_mate(is_white)) {
+		total += endgame;
+	}
+	return total;
 }

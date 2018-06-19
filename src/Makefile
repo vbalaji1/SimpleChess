@@ -4,10 +4,10 @@ CFLAGS=-I$(IDIR) -lm
 IDIR=../include
 ODIR=obj
 
-_DEPS = utilities.h bitboard.h pawn.h mvgen.h state.h evaluate.h
+_DEPS = utilities.h bitboard.h pawn.h mvgen.h state.h evaluate.h search.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
  
-_OBJ = main.o utilities.o bitboard.o pawn.o mvgen.o state.o evaluate.o
+_OBJ = main.o utilities.o bitboard.o pawn.o mvgen.o state.o evaluate.o search.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: %.c $(DEPS)

@@ -4,6 +4,7 @@
 #include "mvgen.h"
 #include "state.h"
 #include "evaluate.h"
+#include "search.h"
 
 U64 wP;
 U64 wR;
@@ -72,46 +73,7 @@ int main() {
 	//print_bits(bQ, true);
 	//print_bits(bK, true);
 	input_move("e4", true);
-	print_bits(wP, true);
-	printf("%f\n", total_score(true) - total_score(false));
-	input_move("e5", false);
-	print_bits(bP, true);
-	printf("%f\n", total_score(true) - total_score(false));
-	input_move("Nf3", true);
-	print_bits(wKn, true);
-	printf("%f\n", total_score(true) - total_score(false));
-	input_move("Nf6", false);
-	print_bits(bKn, true);
-	printf("%f\n", total_score(true) - total_score(false));\
-	input_move("Ne5", true);
-	print_bits(wKn, true);
-	print_bits(bP, true);
-	printf("%f\n", total_score(true) - total_score(false));
-	input_move("Ne4", false);
-	print_bits(bKn, true);
-	print_bits(wP, true);
-	printf("%f\n", total_score(true) - total_score(false));
-	input_move("d3", true);
-	print_bits(wP, true);
-	printf("%f\n", total_score(true) - total_score(false));
-	input_move("d6", false);
-	print_bits(bP, true);
-	printf("%f\n", total_score(true) - total_score(false));
-	input_move("e4", true);
-	print_bits(wP, true);
-	print_bits(bKn, true);
-	printf("%f\n", total_score(true) - total_score(false));
-	input_move("e5", false);
-	print_bits(bP, true);
-	print_bits(wKn, true);
-	printf("%f\n", total_score(true) - total_score(false));
-	input_move("Qd8", true);
-	print_bits(wQ, true);
-	print_bits(bQ, true);
-	printf("%f\n", total_score(true) - total_score(false));
-	input_move("Kd8", false);
-	print_bits(bK, true);
-	print_bits(wQ, true);
-	printf("%f\n", total_score(true) - total_score(false));
+	//Add castling to computer move generation
+	printf("%f\n", total_score(false) - total_score(true));
 
 }

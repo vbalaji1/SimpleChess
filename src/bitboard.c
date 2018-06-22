@@ -210,14 +210,24 @@ U64 gen_qn(U64 bb, int index, bool is_white) {
 U64 gen_k(U64 bb, int index, bool is_white) {
 	U64 mask = 1;
 	U64 full = gen_qn(bb, index, is_white);
-	U64 sq1 = (mask << (index - 1));
-	U64 sq2 = (mask << (index + 1));
-	U64 sq3 = (mask << (index - 8));
-	U64 sq4 = (mask << (index + 8));
-	U64 sq5 = (mask << (index - 7));
-	U64 sq6 = (mask << (index + 7));
-	U64 sq7 = (mask << (index - 9));
-	U64 sq8 = (mask << (index + 9));
+	U64 sq1, sq2, sq3, sq4, sq5, sq6, sq7, sq8;
+	sq1 = sq2 = sq3 = sq4 = sq5 = sq6 = sq7 = sq8 = 0;
+	if (index % 8 != 0) {
+		U64 sq1 = (mask << (index - 1));
+	}
+	if (index % 7 != 0) {
+		U64 sq2 = (mask << (index + 1));
+	}
+	if (index / 8 != 0) {
+		U64 sq3 = (mask << (index - 8));
+		U64 sq5 = (mask << (index - 7));
+		U64 sq7 = (mask << (index - 9));
+	}
+	if (index / 8 != 7) {
+		U64 sq4 = (mask << (index + 8));
+		U64 sq6 = (mask << (index + 7));
+		U64 sq8 = (mask << (index + 9));
+	}
 	U64 limit = sq1 | sq2 | sq3 | sq4 | sq5 | sq6 | sq7 | sq8 | bb;
 	return (full & limit);
 }
@@ -333,17 +343,29 @@ U64 gen_p_capture(U64 bb, U64 opp, bool is_white) {
 			return ((bb << 9) & opp);
 		} else if (index % 8 == 7) {
 			return ((bb << 7) & opp);
-		} else if ((validate_sq(bb << 7, true) != 0) && (validate_sq(bb << 9, true) != 0)) {
-			return (((bb << 7) & opp) | ((bb << 9) & opp));
 		}
+		U64 temp = 0;
+		if ((validate_sq(bb << 7, true) != 0)) {
+			temp =((bb << 7) & opp);
+		}
+		if ((validate_sq(bb << 9, true) != 0)) {
+			temp |= ((bb << 9) & opp);
+		}
+		return temp;
 	} else {
 		if (index % 8 == 0) {
 			return ((bb >> 7) & opp);
 		} else if (index % 8 == 7) {
 			return ((bb >> 9) & opp);
-		} else if ((validate_sq(bb >> 7, false) != 0) && (validate_sq(bb >> 9, false) != 0)) {
-			return (((bb >> 7) & opp) | ((bb >> 9) & opp));
+		} 
+		U64 temp = 0;
+		if ((validate_sq(bb >> 7, false) != 0)) { 
+			temp = ((bb >> 7) & opp);
 		}
+		if ((validate_sq(bb >> 9, false) != 0)) {
+			temp |= ((bb >> 9) & opp);
+		}
+		return temp;
 	}
 }
 

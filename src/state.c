@@ -235,9 +235,11 @@ void input_move(char *mv, bool is_white) {
 		char second = mv[1];
 		char third = mv[2];
 		char fourth = mv[3];
-		dis = second;
+		dis = second == 'x' ? first : second;
 		index = sq_to_index(third, fourth);
-		if (first == 'Q') {
+		if (second == 'x') {
+			piece = P;
+		} else if (first == 'Q') {
 			piece = Q;
 		} else if (first == 'B') {
 			piece = B;

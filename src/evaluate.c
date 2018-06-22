@@ -10,6 +10,60 @@ const double BSHP_SCORE = 3.3;
 const double KN_SCORE = 3.2;
 const double Q_SCORE = 9.6;
 
+int p_sq[] = {0,  0,  0,  0,  0,  0,  0,  0,
+50, 50, 50, 50, 50, 50, 50, 50,
+10, 10, 20, 30, 30, 20, 10, 10,
+ 5,  5, 10, 27, 25, 10,  5,  5,
+ 0,  0,  0, 24, 21,  0,  0,  0,
+ 5, -5,-10,  0,  0,-10, -5,  5,
+ 5, 10, 10,-20,-20, 10, 10,  5,
+ 0,  0,  0,  0,  0,  0,  0,  0};
+
+int kn_sq[] = {-50,-40,-30,-30,-30,-30,-40,-50,
+-40,-20,  0,  0,  0,  0,-20,-40,
+-30,  0, 12, 15, 15, 11,  0,-30,
+-30,  5, 16, 20, 22, 17,  5,-30,
+-30,  0, 14, 23, 20, 15,  0,-30,
+-30,  5, 10, 14, 16, 11,  5,-30,
+-40,-20,  0,  5,  5,  0,-20,-40,
+-50,-40,-30,-30,-30,-30,-40,-50};
+
+int b_sq[] = {-20,-10,-10,-10,-10,-10,-10,-20,
+-10,  0,  0,  0,  0,  0,  0,-10,
+-10,  0,  5, 10, 10,  5,  0,-10,
+-10,  5,  5, 10, 10,  5,  5,-10,
+-10,  0, 10, 10, 10, 10,  0,-10,
+-10, 10, 10, 10, 10, 10, 10,-10,
+-10,  5,  0,  0,  0,  0,  5,-10,
+-20,-10,-10,-10,-10,-10,-10,-20};
+
+int r_sq[] = {  0,  0,  0,  0,  0,  0,  0,  0,
+  5, 10, 10, 10, 10, 10, 10,  5,
+ -5,  0,  0,  0,  0,  0,  0, -5,
+ -5,  0,  0,  0,  0,  0,  0, -5,
+ -5,  0,  0,  0,  0,  0,  0, -5,
+ -5,  0,  0,  0,  0,  0,  0, -5,
+ -5,  0,  0,  0,  0,  0,  0, -5,
+  0,  0,  0,  5,  5,  0,  0,  0};
+
+int q_sq[] = {-20,-10,-10, -5, -5,-10,-10,-20,
+-10,  0,  0,  0,  0,  0,  0,-10,
+-10,  0,  5,  5,  5,  5,  0,-10,
+ -5,  0,  5,  5,  5,  5,  0, -5,
+  0,  0,  5,  5,  5,  5,  0, -5,
+-10,  5,  5,  5,  5,  5,  0,-10,
+-10,  0,  5,  0,  0,  0,  0,-10,
+-20,-10,-10, -5, -5,-10,-10,-20};
+
+int k_sq[] = {-30,-40,-40,-50,-50,-40,-40,-30,
+-30,-40,-40,-50,-50,-40,-40,-30,
+-30,-40,-40,-50,-50,-40,-40,-30,
+-30,-40,-40,-50,-50,-40,-40,-30,
+-20,-30,-30,-40,-40,-30,-30,-20,
+-10,-20,-20,-20,-20,-20,-20,-10,
+ 20, 20,  0,  0,  0,  0, 20, 20,
+ 20, 30, 10,  0,  0, 10, 30, 20};
+
 double material_score(bool is_white) {
 	U64 *p = bb_lookup(is_white, P);
 	U64 *rk = bb_lookup(is_white, R);
@@ -97,91 +151,53 @@ double center_score(bool is_white) {
 	return (double) score;
 }
 
-double mobility_score(bool is_white) {
+double total_score(bool is_white) {
+	U64 mask = 1;
+	double endgame = -20000.0;
+	double total_score = 2 * material_score(is_white) + 0.1 * center_score(is_white);
 	U64 *p = bb_lookup(is_white, P);
-	U64 *rk = bb_lookup(is_white, R);
-	U64 *bshp = bb_lookup(is_white, B);
 	U64 *kn = bb_lookup(is_white, Kn);
+	U64 *b = bb_lookup(is_white, B);
+	U64 *rk = bb_lookup(is_white, R);
 	U64 *q = bb_lookup(is_white, Q);
 	U64 *k = bb_lookup(is_white, K);
 
-	U64 mask = 1;
-	Vector *v = (Vector *) malloc(sizeof(Vector));
-	init_vector(v);
-	v = gen_all_patks(*p, is_white, v);
-	v = gen_all_moves(*rk, is_white, R, v);
-	v = gen_all_moves(*bshp, is_white, B, v);
-	v = gen_all_moves(*kn, is_white, Kn, v);
-	v = gen_all_moves(*q, is_white, Q, v);
-	v = gen_all_moves(*k, is_white, K, v);
-	size_t score = 0;
-	for (int i = 0; i < (v->size); i++) {
-		U64 bb = v->elements[i];
-		score += __builtin_popcountl(bb) - 1;
-	}
-
-	U64 *p1 = bb_lookup(!is_white, P);
-	U64 *rk1 = bb_lookup(!is_white, R);
-	U64 *bshp1 = bb_lookup(!is_white, B);
-	U64 *kn1 = bb_lookup(!is_white, Kn);
-	U64 *q1 = bb_lookup(!is_white, Q);
-	U64 *k1 = bb_lookup(!is_white, K);
-	Vector *v1 = (Vector *) malloc(sizeof(Vector));
-	init_vector(v1);
-
-	v1 = gen_all_patks(*p1, !is_white, v1);
-	v1 = gen_all_moves(*rk1, !is_white, R, v1);
-	v1 = gen_all_moves(*bshp1, !is_white, B, v1);
-	v1 = gen_all_moves(*kn1, !is_white, Kn, v1);
-	v1 = gen_all_moves(*q1, !is_white, Q, v1);
-	v1 = gen_all_moves(*k1, !is_white, K, v1);
-	size_t opp_score = 0;
-	for (int i = 0; i < (v1->size); i++) {
-		U64 bb1 = v1->elements[i];
-		opp_score += __builtin_popcountl(bb1) - 1;
-	}
-
-	double entropy = (double) score / (double) opp_score;
-	size_t sq_cntrl = 0;
-	size_t opp_sq_cntrl = 0;
-	U64 sq = 1;
+	double bonus = 0.0;
 	for (int i = 0; i < 64; i++) {
-		size_t local = 0;
-		size_t opp_local = 0;
-		for (int j = 0; j < (v->size); j++) {
-			U64 atk = v->elements[j];
-			if (atk & sq) {
-				local++;
-			}
+		int idx = is_white ? 63 - i : i;
+		U64 piece = (*p & (mask << i));
+		if (piece) {
+			bonus = (double) p_sq[63 - i] / (double) 100;
+			total_score += bonus;
 		}
-		for (int j = 0; j < (v1->size); j++) {
-			U64 atk1 = v1->elements[j];
-			if (atk1 & sq) {
-				opp_local++;
-			}
+		piece = (*kn & (mask << i));
+		if (piece) {
+			bonus = (double) kn_sq[idx] / (double) 100;
+			total_score += bonus;
 		}
-		if (local > opp_local) {
-			sq_cntrl++;
-		} else if (opp_local > local) {
-			opp_sq_cntrl++;
-		} 
-		sq <<= 1;
+		piece = (*b & (mask << i));
+		if (piece) {
+			bonus = (double) b_sq[idx] / (double) 100;
+			total_score += bonus;
+		}
+		piece = (*rk & (mask << i));
+		if (piece) {
+			bonus = (double) r_sq[idx] / (double) 100;
+			total_score += bonus;
+		}
+		piece = (*q & (mask << i));
+		if (piece) {
+			bonus = (double) q_sq[idx] / (double) 100;
+			total_score += bonus;
+		}
+		piece = (*k & (mask << i));
+		if (piece) {
+			bonus = (double) k_sq[idx] / (double) 100;
+			total_score += bonus;
+		}
 	}
-	double sq_ratio = (double) sq_cntrl / (double) opp_sq_cntrl;
-	entropy *= sq_ratio;
-	entropy = log(entropy);
-	clean_vector(v);
-	clean_vector(v1);
-	free(v);
-	free(v1);
-	return entropy;
-}
-
-double total_score(bool is_white) {
-	double endgame = -20000.0;
-	double total = material_score(is_white) + 0.1 * center_score(is_white);
-	if (chk_mate(is_white)) {
-		total += endgame;
+ 	if (chk_mate(is_white)) {
+		total_score += endgame;
 	}
-	return total;
+	return total_score;
 }

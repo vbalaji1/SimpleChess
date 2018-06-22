@@ -142,8 +142,6 @@ U64 chk_self_legality(U64 move, int index, bool is_white, piece_t type) {
 				if (new_piece) {
 					atks = gen_mv_piece(new_piece, j, !is_white, K);
 					if (atks & *(bb_lookup(is_white, K))) {
-						printf("PROBLEM:\n");
-						print_bits(atks, true);
 						move &= ~(mask << i);
 						break;
 					}
@@ -172,13 +170,7 @@ Vector *gen_all_moves(U64 bb, bool is_white, piece_t type, Vector *v) {
 		U64 piece = (bb & (mask << i));
 		if (piece) {
 			U64 move = gen_mv_piece(piece, i, is_white, type);
-			if (type == Kn) {
-				print_bits(move, true);
-			}
 			move = chk_self_legality(move, i, is_white, type);
-			if (type == Kn) {
-				print_bits(move, true);
-			}
 			add(v, move, i, type);
 		}
 	}

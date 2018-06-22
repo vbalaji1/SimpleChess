@@ -213,20 +213,20 @@ U64 gen_k(U64 bb, int index, bool is_white) {
 	U64 sq1, sq2, sq3, sq4, sq5, sq6, sq7, sq8;
 	sq1 = sq2 = sq3 = sq4 = sq5 = sq6 = sq7 = sq8 = 0;
 	if (index % 8 != 0) {
-		U64 sq1 = (mask << (index - 1));
+		sq1 = (mask << (index - 1));
 	}
 	if (index % 7 != 0) {
-		U64 sq2 = (mask << (index + 1));
+		sq2 = (mask << (index + 1));
 	}
 	if (index / 8 != 0) {
-		U64 sq3 = (mask << (index - 8));
-		U64 sq5 = (mask << (index - 7));
-		U64 sq7 = (mask << (index - 9));
+		sq3 = (mask << (index - 8));
+		sq5 = (mask << (index - 7));
+		sq7 = (mask << (index - 9));
 	}
 	if (index / 8 != 7) {
-		U64 sq4 = (mask << (index + 8));
-		U64 sq6 = (mask << (index + 7));
-		U64 sq8 = (mask << (index + 9));
+		sq4 = (mask << (index + 8));
+		sq6 = (mask << (index + 7));
+		sq8 = (mask << (index + 9));
 	}
 	U64 limit = sq1 | sq2 | sq3 | sq4 | sq5 | sq6 | sq7 | sq8 | bb;
 	return (full & limit);

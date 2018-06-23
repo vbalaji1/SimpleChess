@@ -172,6 +172,18 @@ int sq_to_index(char file, char rank) {
 	return row;
 }
 
+char *mv_to_index(U64 mv, piece_t type) {
+	int index = __builtin_ffsl(mv) - 1;
+	char file[] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
+	char rank[] = {'1', '2', '3', '4', '5', '6', '7', '8'};
+	char piece[] = {' ', 'R', 'N', 'B', 'Q', 'K'}; 
+	static char move[2];
+	move[0] = piece[type];
+	move[1] = file[index % 8];
+	move[2] = rank[index / 8];
+	return move;
+}
+
 void input_move(char *mv, bool is_white) {
 	Vector *v = (Vector *) malloc(sizeof(Vector));
 	init_vector(v);

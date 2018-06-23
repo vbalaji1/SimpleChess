@@ -315,22 +315,22 @@ U64 gen_p_noncapture(U64 bb, int index, bool eligible, bool is_white) {
 		int occupied = validate_sq(sq, is_white);
 		if (occupied == 2) {
 			bb = sq | bb;
-		}
-		sq = (mask << (index + 16));
-		occupied = validate_sq(sq, is_white);
-		if (occupied == 2) {
-			bb = eligible ? (sq | bb) : bb;
+			sq = (mask << (index + 16));
+			occupied = validate_sq(sq, is_white);
+			if (occupied == 2) {
+				bb = eligible ? (sq | bb) : bb;
+			}
 		}
 	} else {
 		U64 sq = (mask << (index - 8));
 		int occupied = validate_sq(sq, is_white);
 		if (occupied == 2) {
 			bb = sq | bb;
-		}
-		sq = (mask << (index - 16));
-		occupied = validate_sq(sq, is_white);
-		if (occupied == 2) {
-			bb = eligible ? (sq | bb) : bb;
+			sq = (mask << (index - 16));
+			occupied = validate_sq(sq, is_white);
+			if (occupied == 2) {
+				bb = eligible ? (sq | bb) : bb;
+			}
 		}
 	}
 	return bb; 

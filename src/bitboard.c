@@ -623,6 +623,7 @@ U64 gen_mv_piece(U64 piece, int index, bool is_white, piece_t type) {
 						final = final | gen_p_capture(piece, wB, is_white);
 						final = final | gen_p_capture(piece, wP, is_white);
 					}
+					final |= gen_enpassant(piece, is_white);
 					final = final ^ piece;
 					return final;
 				}		

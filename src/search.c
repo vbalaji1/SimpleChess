@@ -323,6 +323,10 @@ void search_driver(bool is_white) {
 			U64 bR0 = bR;
 			U64 bQ0 = bQ;
 			U64 bK0 = bK;
+			bool wk_castle0 = wk_castle;
+			bool wq_castle0 = wq_castle;
+			bool bk_castle0 = bk_castle;
+			bool bq_castle0 = bq_castle;
 			mk_castle(vq_castle, false, is_white);
 			alpha_root = -alpha_beta(-INFINITY, INFINITY, 0, !is_white);
 			printf("K_SIDE_CASTLE\n");

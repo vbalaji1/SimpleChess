@@ -89,8 +89,6 @@ void mk_move(U64 mv, int index, bool is_white, piece_t piece) {
 
 	*update &= ~(mask << index);
 	*update |= mv;
-	//print_bits(*update, true);
-	//printf(" PIECE %d\n", piece);
 
 	int diff = dest_index - index;
 	if (piece == P && (diff = 16 || diff == -16)) {
@@ -99,8 +97,10 @@ void mk_move(U64 mv, int index, bool is_white, piece_t piece) {
 
 	if (piece == K && is_white) {
 		wk_castle = false;
+		wq_castle = false;
 	} else if (piece == K && (!is_white)) {
 		bk_castle = false;
+		bq_castle = false;
 	} else if (piece == R && is_white && index == 0) {
 		wq_castle = false;
 	} else if (piece == R && is_white && index == 7) {

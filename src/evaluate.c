@@ -1,3 +1,4 @@
+#include "evaluate.h"
 #include "bitboard.h"
 #include "mvgen.h"
 #include "utilities.h"
@@ -151,10 +152,248 @@ double center_score(bool is_white) {
 	return (double) score;
 }
 
+double rk_score(bool is_white) {
+	U64 mask = 1;
+	bool connected = false;
+	int semi_open = 0;
+	int open = 0;
+	int idx, idx2;
+	idx = idx2 = -1;
+	U64 *rk = bb_lookup(is_white, R);
+	U64 *p = bb_lookup(is_white, P);
+	U64 *opp_p = bb_lookup(!is_white, P);
+	int rk_count = __builtin_popcountl(*rk);
+	if (rk_count == 1 || rk_count == 2) {
+		for (int i = 0; i < 64; i++) {
+			U64 piece = (*rk & (mask << i));
+			if (piece && idx == -1) {
+				idx = i;
+			} else if (piece && idx2 == -1) {
+				idx2 = i;
+				break;
+			}
+		}
+	}
+	if (idx != -1) {
+		int prev = idx % 8;
+		int next = 7 - prev;
+		for (int i = 1; i <= prev; i++) {
+			U64 slide = (mask << (idx - i));
+			if (validate_sq(slide, is_white) == 2) {
+				continue;
+			} else if (validate_sq(slide, is_white) == 1) {
+				break;
+			} else if (validate_sq(slide, is_white) == 0) {
+				if (slide & *rk) {
+					connected = true;
+					break;
+				} else {
+					break;
+				}
+			}
+		}
+		if (!connected) {
+			for (int i = 1; i <= next; i++) {
+				U64 slide = (mask << (idx + i));
+				if (validate_sq(slide, is_white) == 2) {
+					continue;
+				} else if (validate_sq(slide, is_white) == 1) {
+					break;
+				} else if (validate_sq(slide, is_white) == 0) {
+					if (slide & *rk) {
+						connected = true;
+						break;
+					} else {
+						break;
+					}
+				}
+			}
+		}
+		int rank = idx / ((U64) 8);
+		prev = rank % 8;                  
+		next = 7 - prev;
+		if (!connected) {
+			for (int i = 1; i <= prev; i++) {
+				U64 slide = (mask << (idx - (i * 8)));
+				if (validate_sq(slide, is_white) == 2) {
+					continue;
+				} else if (validate_sq(slide, is_white) == 1) {
+					break;
+				} else if (validate_sq(slide, is_white) == 0) {
+					if (slide & *rk) {
+						connected = true;
+						break;
+					} else {
+						break;
+					}
+				}
+			}
+		}
+		if (!connected) {
+			for (int i = 1; i <= next; i++) {
+				U64 slide = (mask << (idx + (i * 8)));
+				if (validate_sq(slide, is_white) == 2) {
+					continue;
+				} else if (validate_sq(slide, is_white) == 1) {
+					break;
+				} else if (validate_sq(slide, is_white) == 0) {
+					if (slide & *rk) {
+						connected = true;
+						break;
+					} else {
+						break;
+					}
+				}
+			}
+		}
+		bool open_file[7] = { true };
+		for (int i = 0; i < 64; i++) {
+			U64 self = (*p & (mask << i));
+			if (self) {
+				int file = (idx - i) % 8;
+				if (file == 0) {
+					open_file[file] = false; 
+				}
+				if (rk_count == 2) {
+					file = (idx2 - i) % 8;
+					if (file == 0) {
+						open_file[file] = false;
+					}
+				}
+			}
+		}
+		for (int i = 0; i < 64; i++) {
+			U64 piece = (*opp_p & (mask << i));
+			if (piece) {
+				int file = (idx - i) % 8;
+				if (file == 0 && open_file[file]) {
+					semi_open++;
+				}
+				if (rk_count == 2) {
+					file = (idx2 - i) % 8;
+					if (file == 0 && open_file[file]) {
+						semi_open++;
+					}
+				}
+			}
+		}
+		int rank2 = idx2 / ((U64) 8);
+		int prev2 = rank2 % 8;
+		int next2 = 7 - prev2;
+		bool clear = true;
+		for (int i = 1; i <= prev; i++) {
+			U64 op = (mask << (idx - (i * 8)));
+			if (validate_sq(op, is_white) != 2) {
+				clear = false;
+			}
+		}
+		for (int i = 1; i <= next; i++) {
+			U64 op = (mask << (idx + (i * 8)));
+			if (validate_sq(op, is_white) != 2) {
+				clear = false;
+			}
+		}
+		open = clear ? open + 1 : open;
+		clear = true;
+		if (rk_count == 2) {
+			for (int i = 1; i <= prev2; i++) {
+				U64 op = (mask << (idx2 - (i * 8)));
+				if (validate_sq(op, is_white) != 2) {
+					clear = false;
+				}
+			}
+			for (int i = 1; i <= next2; i++) {
+				U64 op = (mask << (idx2 + (i * 8)));
+				if (validate_sq(op, is_white) != 2) {
+					clear = false;
+				}
+			}
+			open = clear ? open + 1 : open;
+		}
+	}
+	double connect_bonus = connected ? 0.15 : 0.0;
+	return connect_bonus + open * 0.15 + semi_open * 0.1;
+}
+
+double p_score(bool is_white) {
+	U64 mask = 1;
+	double dub_penalty = 0.0;
+	double iso_penalty = 0.0;
+	bool isolated = true;
+	U64 *p = bb_lookup(is_white, P);
+	for (int i = 0; i < 64; i++) {
+		U64 piece = (*p & (mask << i));
+		if (piece) {
+			int rank = i / 8;
+			int prev = rank % 8;
+			int next = 7 - prev;
+			for (int j = 1; j <= prev; j++) {
+				U64 sq = (mask << (i - (j * 8)));
+				U64 adj_l = (mask << (i - 1 - (j * 8)));
+				U64 adj_r = (mask << (i + 1 - (j * 8)));
+				if (sq & *p) {
+					dub_penalty += -0.25;
+				}
+				if (i % 8 == 0) {
+					if (adj_r & *p) {
+						isolated = false;
+
+					}
+				} else if (i % 7 == 0) {
+					if (adj_l & *p) {
+						isolated = false;
+					}
+				} else {
+					if ((adj_r & *p) || (adj_l && *p)) {
+						isolated = false;
+					}
+				}
+			} 
+			for (int j = 1; j <= next; j++) {
+				U64 sq = (mask << (i + (j * 8)));
+				U64 adj_l = (mask << (i - 1 + (j * 8)));
+				U64 adj_r = (mask << (i + 1 + (j * 8)));
+				if (sq & *p) {
+					dub_penalty += -0.25;
+				}
+				if (i % 8 == 0) {
+					if (adj_r & *p) {
+						isolated = false;
+					}
+				} else if (i % 7 == 0) {
+					if (adj_l & *p) {
+						isolated = false;
+					}
+				} else {
+					if ((adj_r & *p) || (adj_l & *p)) {
+						isolated = false;
+					}
+				}
+			}
+			U64 adj = (mask << (i - 1));
+			if (adj & *p) {
+				isolated = false;
+			}
+			adj = (mask << (i + 1));
+			if (adj & *p) {
+				isolated = false;
+			}
+			if (isolated) {
+				iso_penalty += -0.10;
+			}
+			isolated = true;
+		}
+	}
+	return dub_penalty + iso_penalty;
+}
 double total_score(bool is_white) {
 	U64 mask = 1;
 	double endgame = -20000.0;
-	double total_score = 2 * material_score(is_white) + 0.1 * center_score(is_white);
+	double total_score = 2 * material_score(is_white) + 0.1 * center_score(is_white)
+		+ rk_score(is_white);
+	if (is_endgame(is_white) == MAX_DEPTH) {
+		total_score += p_score(is_white);
+	}
 	U64 *p = bb_lookup(is_white, P);
 	U64 *kn = bb_lookup(is_white, Kn);
 	U64 *b = bb_lookup(is_white, B);
@@ -167,7 +406,7 @@ double total_score(bool is_white) {
 		int idx = is_white ? 63 - i : i;
 		U64 piece = (*p & (mask << i));
 		if (piece) {
-			bonus = (double) p_sq[63 - i] / (double) 100;
+			bonus = (double) p_sq[idx] / (double) 100;
 			total_score += bonus;
 		}
 		piece = (*kn & (mask << i));
@@ -200,4 +439,36 @@ double total_score(bool is_white) {
 		total_score += endgame;
 	}
 	return total_score;
+}
+
+
+int is_endgame(bool is_white) {
+	U64 *p = bb_lookup(is_white, P);
+	U64 *rk = bb_lookup(is_white, R);
+	U64 *bshp = bb_lookup(is_white, B);
+	U64 *kn = bb_lookup(is_white, Kn);
+	U64 *q = bb_lookup(is_white, Q);
+	U64 *k = bb_lookup(is_white, K);
+
+	U64 *p1 = bb_lookup(!is_white, P);
+	U64 *rk1 = bb_lookup(!is_white, R);
+	U64 *bshp1 = bb_lookup(!is_white, B);
+	U64 *kn1 = bb_lookup(!is_white, Kn);
+	U64 *q1 = bb_lookup(!is_white, Q);
+	U64 *k1 = bb_lookup(!is_white, K);
+
+	size_t w_total = __builtin_popcountl(*p) + __builtin_popcountl(*rk)
+		+ __builtin_popcountl(*bshp) + __builtin_popcountl(*kn) 
+		+ __builtin_popcountl(*q) + __builtin_popcountl(*k);
+	size_t b_total = __builtin_popcountl(*p1) + __builtin_popcountl(*rk1)
+		+ __builtin_popcountl(*bshp1) + __builtin_popcountl(*kn1) 
+		+ __builtin_popcountl(*q1) + __builtin_popcountl(*k1);
+
+	if (w_total + b_total < 5) {
+		return 20;
+	} else if (w_total + b_total <= 10) {
+		return 15;
+	} else {
+		return MAX_DEPTH;
+	}
 }

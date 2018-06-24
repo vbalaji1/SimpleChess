@@ -92,7 +92,7 @@ void mk_move(U64 mv, int index, bool is_white, piece_t piece) {
 
 	int diff = dest_index - index;
 	if (piece == P && (diff = 16 || diff == -16)) {
-		p_enpassant |= mv;
+		p_enpassant  |= mv;
 	}
 
 	if (piece == K && is_white) {
@@ -147,6 +147,13 @@ void mk_castle(Vector *v, bool k_side, bool is_white) {
 		}
 	}
 	*rk |= v->elements[1];
+	if (is_white) {
+		wk_castle = false;
+		wq_castle = false;
+	} else {
+		bk_castle = false;
+		bq_castle = false;
+	}
 }
 
 int sq_to_index(char file, char rank) {

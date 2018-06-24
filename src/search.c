@@ -4,7 +4,7 @@
 #include "evaluate.h"
 #include "state.h"
 
-const int MAX_DEPTH = 3;
+int MAX_DEPTH = 3;
 const U64 mask = 1;
 
 double alpha_root;
@@ -183,6 +183,7 @@ void search_driver(bool is_white) {
 	int origin;
 	double max_score = -INFINITY;
 	alpha_root = INFINITY;
+	MAX_DEPTH = is_endgame(is_white);
 
 	Vector *v = (Vector *) malloc(sizeof(Vector)); 
 	init_vector(v); 

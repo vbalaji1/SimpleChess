@@ -1,6 +1,7 @@
 #include "bitboard.h"
 #include "mvgen.h"
 #include "utilities.h"
+#include "pawn.h"
 
 U64 *bb_lookup(bool is_white, piece_t type) {
 	if (is_white) {

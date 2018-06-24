@@ -30,7 +30,6 @@ U64 a1_h8diag;
 
 //LITTLE-ENDIAN RANK-FILE MAPPING
 void init_bitboards() {
-	//wP = 0x0000006000009F00;
 	wP = 0x000000000000FF00;
 	wR = 0x0000000000000081;
 	wKn = 0x0000000000000042;
@@ -41,7 +40,6 @@ void init_bitboards() {
 	bR = 0x8100000000000000;
 	bKn = 0x4200000000000000;
 	bB = 0x2400000000000000;
-	//bQ = 0x0000000080000000;
 	bQ = 0x0800000000000000;
 	bK = 0x1000000000000000;
 	wk_castle = true;
@@ -77,6 +75,9 @@ int main() {
 	while (true) {
 		printf("INPUT MOVE:\n");
 		scanf("%s", move);
+		if (strcmp(move, "end") == 0) {
+			break;
+		}
 		printf("INPUTTED: %s\n", move);
 		input_move(move, side);
 		search_driver(!side);
@@ -84,8 +85,9 @@ int main() {
 		scanf("%s", move);
 		printf("INPUTTED: %s\n", move);
 		input_move(move, !side);
+		printf("RK_SCORE: %f\n", rk_score(!side));
+		printf("P_SCORE: %f\n", p_score(!side));
 	}
-	//Add castling to computer move generation
 	//printf("%f\n", total_score(false) - total_score(true));
 
 }

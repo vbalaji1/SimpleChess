@@ -5,6 +5,7 @@
 #include "state.h"
 #include "evaluate.h"
 #include "search.h"
+#include "mt64.h"
 
 U64 wP;
 U64 wR;
@@ -24,6 +25,8 @@ bool wk_castle;
 bool wq_castle;
 bool bk_castle;
 bool bq_castle;
+
+U64 hashes[781];
 
 U64 wRtest;
 U64 a1_h8diag;
@@ -56,8 +59,16 @@ void init_bitboards() {
 
 }
 
+void init_zobrist() {
+	for (int i = 0; i < 781; i++) {
+		hashes[i] = genrand64_int64();
+	}
+}
+
 int main() {
 	init_bitboards();
+	init_zobrist();
+	zobrist_hash(false);
 	//print_bits(wP, true);
 	//print_bits(wR, true);
 	//print_bits(wK, true);
@@ -85,6 +96,7 @@ int main() {
 		scanf("%s", move);
 		printf("INPUTTED: %s\n", move);
 		input_move(move, !side);
+		//Fix RK_score
 		printf("RK_SCORE: %f\n", rk_score(!side));
 		printf("P_SCORE: %f\n", p_score(!side));
 	}

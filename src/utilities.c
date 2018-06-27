@@ -1,4 +1,8 @@
 #include "utilities.h"
+#include "bitboard.h"
+#include "pawn.h"
+
+#define INDEX(is_white, piece) (is_white ? piece : piece + 6)
 
 void print_bits(U64 n, bool gridwise) {
 	//n = __builtin_bswap64(n);
@@ -42,4 +46,82 @@ void clean_vector(Vector *v) {
 	v->origin = NULL;
 	free(v->piece);
 	v->piece = NULL;
+}
+
+U64 zobrist_hash(bool is_white) {
+	U64 mask = 1;
+	U64 p = *(bb_lookup(is_white, P));
+	U64 rk = *(bb_lookup(is_white, R));
+	U64 bshp = *(bb_lookup(is_white, B));
+	U64 kn = *(bb_lookup(is_white, Kn));
+	U64 q = *(bb_lookup(is_white, Q));
+	U64 k = *(bb_lookup(is_white, K));
+	U64 hash = 0;
+
+	for (int i = 0; i < 64; i++) {
+		U64 bit = (p & (mask << i));
+		if (bit) {
+			hash ^= hashes[INDEX(is_white, P) * 64 + i];
+		}
+		bit = (rk & (mask << i));
+		if (bit) {
+			hash ^= hashes[INDEX(is_white, R) * 64 + i];
+		}
+		bit = (bshp & (mask << i));
+		if (bit) {
+			hash ^= hashes[INDEX(is_white, B) * 64 + i];
+		}
+		bit = (kn & (mask << i));
+		if (bit) {
+			hash ^= hashes[INDEX(is_white, K) * 64 + i];
+		}
+		bit = (q & (mask << i));
+		if (bit) {
+			hash ^= hashes[INDEX(is_white, Q) * 64 + i];
+		}
+		bit = (k & (mask << i));
+		if (bit) {
+			hash ^= hashes[INDEX(is_white, K) * 64 + i];
+		}
+	}
+
+	U64 p = *(bb_lookup(!is_white, P));
+	U64 rk = *(bb_lookup(!is_white, R));
+	U64 bshp = *(bb_lookup(!is_white, B));
+	U64 kn = *(bb_lookup(!is_white, Kn));
+	U64 q = *(bb_lookup(!is_white, Q));
+	U64 k = *(bb_lookup(!is_white, K));
+
+	for (int i = 0; i < 64; i++) {
+		U64 bit = (p & (mask << i));
+		if (bit) {
+			hash ^= hashes[INDEX(!is_white, P) * 64 + i];
+		}
+		bit = (rk & (mask << i));
+		if (bit) {
+			hash ^= hashes[INDEX(!is_white, R) * 64 + i];
+		}
+		bit = (bshp & (mask << i));
+		if (bit) {
+			hash ^= hashes[INDEX(!is_white, B) * 64 + i];
+		}
+		bit = (kn & (mask << i));
+		if (bit) {
+			hash ^= hashes[INDEX(!is_white, K) * 64 + i];
+		}
+		bit = (q & (mask << i));
+		if (bit) {
+			hash ^= hashes[INDEX(!is_white, Q) * 64 + i];
+		}
+		bit = (k & (mask << i));
+		if (bit) {
+			hash ^= hashes[INDEX(!is_white, K) * 64 + i];
+		}
+	}
+	hash ^= is_white ? hashes[768] : 0;
+	hash ^= wk_castle ? hashes[769] : 0;
+	hash ^= wq_castle ? hashes[770] : 0;
+	hash ^= bk_castle ? hashes[771] : 0;
+	hash ^= bq_castle ? hashes[772] : 0;
+	//enpassant file
 }

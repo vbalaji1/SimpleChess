@@ -234,11 +234,11 @@ void search_driver(bool is_white) {
 				bool bq_castle0 = bq_castle;
 				mk_move(move, v->origin[i], is_white, v->piece[i]);
 				alpha_root = -alpha_beta(-INFINITY, INFINITY, 0, !is_white);
-					print_bits(move, true);
-					printf("PIECE: %d\n", v->piece[i]);
-					printf("ORIGIN: %d\n", v->origin[i]);
-					printf("ROOT: YES\n");
-					printf("%f\n", alpha_root);
+				print_bits(move, true);
+				printf("PIECE: %d\n", v->piece[i]);
+				printf("ORIGIN: %d\n", v->origin[i]);
+				printf("ROOT: YES\n");
+				printf("%f\n", alpha_root);
 				wP = wP0;
 				wKn = wKn0;
 				wB = wB0;
@@ -285,7 +285,7 @@ void search_driver(bool is_white) {
 			mk_castle(vk_castle, true, is_white);
 			alpha_root = -alpha_beta(-INFINITY, INFINITY, 0, !is_white);
 			printf("K_SIDE_CASTLE\n");
-					printf("%f\n", alpha_root);
+			printf("%f\n", alpha_root);
 			wP = wP0;
 			wKn = wKn0;
 			wB = wB0;
@@ -303,10 +303,10 @@ void search_driver(bool is_white) {
 			bk_castle = bk_castle0;
 			bq_castle = bq_castle0;
 			if (alpha_root > max_score) {
-					type = vk_castle->piece[0];
-					max_score = alpha_root;
-					origin = vk_castle->origin[0];
-					best_mv = vk_castle->elements[0];
+				type = vk_castle->piece[0];
+				max_score = alpha_root;
+				origin = vk_castle->origin[0];
+				best_mv = vk_castle->elements[0];
 			}
 		}
 	}
@@ -330,8 +330,8 @@ void search_driver(bool is_white) {
 			bool bq_castle0 = bq_castle;
 			mk_castle(vq_castle, false, is_white);
 			alpha_root = -alpha_beta(-INFINITY, INFINITY, 0, !is_white);
-			printf("K_SIDE_CASTLE\n");
-					printf("%f\n", alpha_root);
+			printf("Q_SIDE_CASTLE\n");
+			printf("%f\n", alpha_root);
 			wP = wP0;
 			wKn = wKn0;
 			wB = wB0;
@@ -349,10 +349,10 @@ void search_driver(bool is_white) {
 			bk_castle = bk_castle0;
 			bq_castle = bq_castle0;
 			if (alpha_root > max_score) {
-					type = vq_castle->piece[0];
-					max_score = alpha_root;
-					origin = vq_castle->origin[0];
-					best_mv = vq_castle->elements[0];
+				type = vq_castle->piece[0];
+				max_score = alpha_root;
+				origin = vq_castle->origin[0];
+				best_mv = vq_castle->elements[0];
 			}
 		}
 	}

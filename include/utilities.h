@@ -18,8 +18,6 @@ extern bool bq_castle;
 
 extern U64 p_enpassant;
 
-extern U64 hashes[781];
-
 typedef enum piece {
 	P,
 	R,
@@ -37,12 +35,6 @@ typedef struct vector {
 	piece_t* piece; 
 } Vector;
 
-typedef struct hashentry {
-	U64 key; 
-	int depth;
-	double score;
-	U64 position; 
-} HashEntry;
 
 void print_bits(U64 n, bool gridwise);
 void init_vector(Vector *v);

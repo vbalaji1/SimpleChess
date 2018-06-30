@@ -5,7 +5,6 @@
 #define INDEX(is_white, piece) (is_white ? piece : piece + 6)
 
 void print_bits(U64 n, bool gridwise) {
-	//n = __builtin_bswap64(n);
 	U64 mask = 1;
 	for (U64 i = 0; i < 64; i++) {
 		if (gridwise && (i % 8 == 0)) {
@@ -48,7 +47,7 @@ void clean_vector(Vector *v) {
 	v->piece = NULL;
 }
 
-U64 zobrist_hash(bool is_white) {
+/*U64 zobrist_hash(bool is_white) {
 	U64 mask = 1;
 	U64 p = *(bb_lookup(is_white, P));
 	U64 rk = *(bb_lookup(is_white, R));
@@ -85,12 +84,12 @@ U64 zobrist_hash(bool is_white) {
 		}
 	}
 
-	U64 p = *(bb_lookup(!is_white, P));
-	U64 rk = *(bb_lookup(!is_white, R));
-	U64 bshp = *(bb_lookup(!is_white, B));
-	U64 kn = *(bb_lookup(!is_white, Kn));
-	U64 q = *(bb_lookup(!is_white, Q));
-	U64 k = *(bb_lookup(!is_white, K));
+	p = *(bb_lookup(!is_white, P));
+	rk = *(bb_lookup(!is_white, R));
+	bshp = *(bb_lookup(!is_white, B));
+	kn = *(bb_lookup(!is_white, Kn));
+	q = *(bb_lookup(!is_white, Q));
+	k = *(bb_lookup(!is_white, K));
 
 	for (int i = 0; i < 64; i++) {
 		U64 bit = (p & (mask << i));
@@ -127,4 +126,4 @@ U64 zobrist_hash(bool is_white) {
 	int file = index % 8;
 	hash ^= hashes[773 + file]; 
 	return hash;
-}
+}*/

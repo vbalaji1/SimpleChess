@@ -26,11 +26,6 @@ bool wq_castle;
 bool bk_castle;
 bool bq_castle;
 
-U64 hashes[781];
-
-U64 wRtest;
-U64 a1_h8diag;
-
 //LITTLE-ENDIAN RANK-FILE MAPPING
 void init_bitboards() {
 	wP = 0x000000000000FF00;
@@ -51,35 +46,10 @@ void init_bitboards() {
 	bq_castle = true;
 
 
-
-	wRtest = 0x0000000000000001;
-
-	a1_h8diag = 0x8040201008040201;
-
-
-}
-
-void init_zobrist() {
-	for (int i = 0; i < 781; i++) {
-		hashes[i] = genrand64_int64();
-	}
 }
 
 int main() {
 	init_bitboards();
-	init_zobrist();
-	//print_bits(wP, true);
-	//print_bits(wR, true);
-	//print_bits(wK, true);
-	//print_bits(wB, true);
-	//print_bits(wQ, true);
-	//print_bits(wK, true);
-	//print_bits(bP, true);
-	//print_bits(bR, true);
-	//print_bits(bK, true);
-	//print_bits(bB, true);
-	//print_bits(bQ, true);
-	//print_bits(bK, true);
 	char move[3];
 	bool side = true;
 	while (true) {
@@ -99,6 +69,4 @@ int main() {
 		printf("RK_SCORE: %f\n", rk_score(!side));
 		printf("P_SCORE: %f\n", p_score(!side));
 	}
-	//printf("%f\n", total_score(false) - total_score(true));
-
 }

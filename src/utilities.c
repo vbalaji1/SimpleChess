@@ -123,5 +123,8 @@ U64 zobrist_hash(bool is_white) {
 	hash ^= wq_castle ? hashes[770] : 0;
 	hash ^= bk_castle ? hashes[771] : 0;
 	hash ^= bq_castle ? hashes[772] : 0;
-	//enpassant file
+	int index = __builtin_ffsl(p_enpassant) - 1;
+	int file = index % 8;
+	hash ^= hashes[773 + file]; 
+	return hash;
 }

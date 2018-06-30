@@ -68,7 +68,6 @@ void init_zobrist() {
 int main() {
 	init_bitboards();
 	init_zobrist();
-	zobrist_hash(false);
 	//print_bits(wP, true);
 	//print_bits(wR, true);
 	//print_bits(wK, true);

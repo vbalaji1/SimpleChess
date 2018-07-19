@@ -31,6 +31,15 @@ bool chk_mate(bool is_white) {
 	return true;
 }
 
+/*bool chk_draw() {
+	if (wP == 0 && bP == 0 && wR == 0 && bR == 0 && wB == 0 && bB == 0
+		&& wKn == 0 && bKn == 0 && wQ == 0 && bQ == 0) {
+		return true;
+	}
+	if (wP == 0 && bP == 0 && wR == 0 && bR == 0 && wB == 0 && bB == 0
+		&& wKn == 0 && bKn == 0 && wQ == 0 && bQ == 0)
+}*/
+
 bool chk_enp(U64 mv, int dest_index, bool is_white) {
 	U64 mask = 1;
 	U64 *p = bb_lookup(!is_white, P);

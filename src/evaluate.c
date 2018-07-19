@@ -12,10 +12,10 @@ const double KN_SCORE = 3.2;
 const double Q_SCORE = 9.6;
 
 int p_sq[] = {0,  0,  0,  0,  0,  0,  0,  0,
-50, 50, 50, 50, 50, 50, 50, 50,
-10, 10, 20, 30, 30, 20, 10, 10,
- 5,  5, 10, 27, 25, 10,  5,  5,
- 0,  0,  0, 24, 21,  0,  0,  0,
+55, 55, 55, 55, 55, 55, 55, 55,
+10, 15, 20, 25, 25, 20, 15, 10,
+ 5,  5, 10, 20, 20, 10,  5,  5,
+ 0,  0,  0, 19, 19,  0,  0,  0,
  5, -5,-10,  0,  0,-10, -5,  5,
  5, 10, 10,-20,-20, 10, 10,  5,
  0,  0,  0,  0,  0,  0,  0,  0};
@@ -166,9 +166,9 @@ double rk_score(bool is_white) {
 	if (rk_count == 1 || rk_count == 2) {
 		for (int i = 0; i < 64; i++) {
 			U64 piece = (*rk & (mask << i));
-			if (piece && idx == -1) {
+			if (piece && (idx == -1)) {
 				idx = i;
-			} else if (piece && idx2 == -1) {
+			} else if (piece && (idx2 == -1)) {
 				idx2 = i;
 				break;
 			}
@@ -246,18 +246,18 @@ double rk_score(bool is_white) {
 				}
 			}
 		}
-		bool open_file[7] = { true };
+		bool open_file[8] = {[0 ... 7] = true};
 		for (int i = 0; i < 64; i++) {
 			U64 self = (*p & (mask << i));
 			if (self) {
-				int file = (idx - i) % 8;
+				int file = abs((idx - i)) % 8;
 				if (file == 0) {
-					open_file[file] = false; 
-				}
+					open_file[i % 8] = false; 
+				} 
 				if (rk_count == 2) {
-					file = (idx2 - i) % 8;
+					file = abs((idx2 - i)) % 8;
 					if (file == 0) {
-						open_file[file] = false;
+						open_file[i % 8] = false;
 					}
 				}
 			}
@@ -265,13 +265,13 @@ double rk_score(bool is_white) {
 		for (int i = 0; i < 64; i++) {
 			U64 piece = (*opp_p & (mask << i));
 			if (piece) {
-				int file = (idx - i) % 8;
-				if (file == 0 && open_file[file]) {
+				int file = abs((idx - i)) % 8;
+				if (file == 0 && open_file[i % 8]) {
 					semi_open++;
 				}
 				if (rk_count == 2) {
-					file = (idx2 - i) % 8;
-					if (file == 0 && open_file[file]) {
+					file = abs((idx2 - i)) % 8;
+					if (file == 0 && open_file[i % 8]) {
 						semi_open++;
 					}
 				}
@@ -312,7 +312,7 @@ double rk_score(bool is_white) {
 		}
 	}
 	double connect_bonus = connected ? 0.15 : 0.0;
-	return connect_bonus + open * 0.15 + semi_open * 0.1;
+	return connect_bonus + 0.15 * open + 0.1 * semi_open;
 }
 
 double p_score(bool is_white) {

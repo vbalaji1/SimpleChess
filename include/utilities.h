@@ -35,10 +35,20 @@ typedef struct vector {
 	piece_t* piece; 
 } Vector;
 
+typedef struct hashentry {
+	U64 key;
+	int depth;
+	bool ancient;
+	double score;
+	bool valid;
+} HashEntry;
 
 void print_bits(U64 n, bool gridwise);
 void init_vector(Vector *v);
 void add(Vector *v, U64 element, int origin, piece_t type);
 void clean_vector(Vector *v);
+void init_zobrist();
+void clean_zobrist();
+U64 zobrist_hash(bool is_white);
 
 #endif

@@ -20,6 +20,8 @@ extern bool wq_castle;
 extern bool bk_castle;
 extern bool bq_castle;
 
+extern HashEntry transpositions[1299827];
+
 void search_driver(bool is_white);
 
 #endif

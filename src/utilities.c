@@ -1,8 +1,12 @@
 #include "utilities.h"
 #include "bitboard.h"
 #include "pawn.h"
+#include "mt64.h"
 
 #define INDEX(is_white, piece) (is_white ? piece : piece + 6)
+
+U64 hashes[781];
+HashEntry transpositions[1299827];
 
 void print_bits(U64 n, bool gridwise) {
 	U64 mask = 1;
@@ -47,7 +51,27 @@ void clean_vector(Vector *v) {
 	v->piece = NULL;
 }
 
-/*U64 zobrist_hash(bool is_white) {
+void init_zobrist() {
+	for (int i = 0; i < 781; i++) {
+		hashes[i] = genrand64_int64();
+	}
+	for (int i = 0; i < 1299827; i++) {
+		HashEntry *h = (HashEntry *) malloc(sizeof(HashEntry));
+		h->key = 0;
+		h->depth = 0;
+		h->ancient = false;
+		h->score = 0;
+		h->valid = false;
+		transpositions[i] = *h;
+	}
+}
+
+void clean_zobrist() {
+	for (int i = 0; i < 1299827; i++) {
+		free(&transpositions[i]);
+	}
+}
+U64 zobrist_hash(bool is_white) {
 	U64 mask = 1;
 	U64 p = *(bb_lookup(is_white, P));
 	U64 rk = *(bb_lookup(is_white, R));
@@ -126,4 +150,4 @@ void clean_vector(Vector *v) {
 	int file = index % 8;
 	hash ^= hashes[773 + file]; 
 	return hash;
-}*/
+}

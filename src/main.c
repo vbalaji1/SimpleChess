@@ -5,7 +5,6 @@
 #include "state.h"
 #include "evaluate.h"
 #include "search.h"
-#include "mt64.h"
 
 U64 wP;
 U64 wR;
@@ -44,29 +43,29 @@ void init_bitboards() {
 	wq_castle = true;
 	bk_castle = true;
 	bq_castle = true;
-
-
 }
 
 int main() {
 	init_bitboards();
 	char move[3];
-	bool side = true;
-	while (true) {
+	/*while (true) {
 		printf("INPUT MOVE:\n");
 		scanf("%s", move);
 		if (strcmp(move, "end") == 0) {
 			break;
 		}
 		printf("INPUTTED: %s\n", move);
-		input_move(move, side);
-		search_driver(!side);
+		input_move(move, true);
+		search_driver(false);
 		printf("INPUT computer move: \n");
 		scanf("%s", move);
 		printf("INPUTTED: %s\n", move);
-		input_move(move, !side);
+		input_move(move, false);
 		//Fix RK_score
-		printf("RK_SCORE: %f\n", rk_score(!side));
-		printf("P_SCORE: %f\n", p_score(!side));
-	}
+		printf("RK_SCORE: %f\n", rk_score(false));
+		printf("P_SCORE: %f\n", p_score(false));
+	}*/
+	input_move("e4", true);
+	input_move("e5", false);
+	search_driver(true);
 }

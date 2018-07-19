@@ -3,8 +3,9 @@
 #include "mvgen.h"
 #include "evaluate.h"
 #include "state.h"
+#include "search.h"
 
-int MAX_DEPTH = 3;
+int MAX_DEPTH = 4;
 const U64 mask = 1;
 
 double alpha_root;
@@ -12,7 +13,17 @@ double alpha_root;
 double alpha_beta(double alpha, double beta, int depth, bool is_white) {
 
 	if (depth == MAX_DEPTH || chk_mate(is_white) || chk_mate(!is_white)) {
-		return total_score(is_white) - total_score(!is_white); 
+		double current_score = total_score(is_white) - total_score(!is_white); 
+		U64 hsh = zobrist_hash(is_white);
+		int index = hsh % 1299827;
+		if (!(transpositions[index].valid)) {
+			transpositions[index].key = hsh;
+			transpositions[index].depth = depth;
+			transpositions[index].ancient = false;
+			transpositions[index].score = current_score;
+			transpositions[index].valid = true;
+		}
+		return current_score;
 	} 
 
 	Vector *v = (Vector *) malloc(sizeof(Vector)); 
@@ -58,8 +69,18 @@ double alpha_beta(double alpha, double beta, int depth, bool is_white) {
 				U64 bR0 = bR;
 				U64 bQ0 = bQ;
 				U64 bK0 = bK;
+				bool wk_castle0 = wk_castle;
+				bool wq_castle0 = wq_castle;
+				bool bk_castle0 = bk_castle;
+				bool bq_castle0 = bq_castle;
 				mk_move(move, v->origin[i], is_white, v->piece[i]);
-				double score = -alpha_beta(-beta, -alpha, depth + 1, !is_white);
+				int index = zobrist_hash(is_white) % 1299827;
+				double score = 0.0;
+				if (transpositions[index].valid && (transpositions[index].key == zobrist_hash(is_white)) && depth == transpositions[index].depth) {
+					score = transpositions[index].score;
+				} else {
+					score = -alpha_beta(-beta, -alpha, depth + 1, !is_white);
+				}
 				wP = wP0;
 				wKn = wKn0;
 				wB = wB0;
@@ -72,6 +93,10 @@ double alpha_beta(double alpha, double beta, int depth, bool is_white) {
 				bR = bR0;
 				bQ = bQ0;
 				bK = bK0;
+				wk_castle = wk_castle0;
+				wq_castle = wq_castle0;
+				bk_castle = bk_castle0;
+				bq_castle = bq_castle0;
 				if (score >= beta) {
 					return beta;
 				} 
@@ -100,7 +125,13 @@ double alpha_beta(double alpha, double beta, int depth, bool is_white) {
 			bool bk_castle0 = bk_castle;
 			bool bq_castle0 = bq_castle;
 			mk_castle(vk_castle, true, is_white);
-			double k_score = -alpha_beta(-beta, -alpha, depth + 1, !is_white);
+			int index = zobrist_hash(is_white) % 1299827;
+			double k_score = 0.0;
+			if (transpositions[index].valid && (transpositions[index].key == zobrist_hash(is_white)) && transpositions[index].depth == depth) {
+				k_score = transpositions[index].score;
+			} else {
+				k_score = -alpha_beta(-beta, -alpha, depth + 1, !is_white);
+			}
 			wP = wP0;
 			wKn = wKn0;
 			wB = wB0;
@@ -144,7 +175,13 @@ double alpha_beta(double alpha, double beta, int depth, bool is_white) {
 			bool bk_castle0 = bk_castle;
 			bool bq_castle0 = bq_castle;
 			mk_castle(vq_castle, false, is_white);
-			double q_score = -alpha_beta(-beta, -alpha, depth + 1, !is_white);
+			int index = zobrist_hash(is_white) % 1299827;
+			double q_score = 0.0;
+			if (transpositions[index].valid && (transpositions[index].key == zobrist_hash(is_white)) && transpositions[index].depth == depth) {
+				q_score = transpositions[index].score;
+			} else {
+				q_score = -alpha_beta(-beta, -alpha, depth + 1, !is_white);
+			}
 			wP = wP0;
 			wKn = wKn0;
 			wB = wB0;
@@ -177,7 +214,9 @@ double alpha_beta(double alpha, double beta, int depth, bool is_white) {
 	free(vk_castle);
 	return alpha;
 }
+
 void search_driver(bool is_white) {
+	init_zobrist();
 	U64 best_mv;
 	piece_t type;
 	int origin;
@@ -362,11 +401,12 @@ void search_driver(bool is_white) {
 	free(v);
 	free(vq_castle);
 	free(vk_castle);
+	//clean_zobrist();
 
 	print_bits(best_mv, true);
 	printf("%s\n", mv_to_index(best_mv, type));
 	printf("PIECE: %d\n", type);
 	printf("ORIGIN: %d\n", origin);
-	printf("SCORE: %f\n", alpha_root);
+	printf("SCORE: %f\n", max_score);
 
 }

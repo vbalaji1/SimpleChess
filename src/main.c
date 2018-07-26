@@ -43,6 +43,7 @@ void init_bitboards() {
 	wq_castle = true;
 	bk_castle = true;
 	bq_castle = true;
+	is_opening = true;
 }
 
 int main() {
@@ -65,7 +66,29 @@ int main() {
 		printf("RK_SCORE: %f\n", rk_score(false));
 		printf("P_SCORE: %f\n", p_score(false));
 	}*/
-	input_move("e4", true);
+	input_move("g3", true);
+	input_move("d6", false);
+	input_move("Bg2", true);
 	input_move("e5", false);
-	search_driver(true);
+	input_move("d4", true);
+	input_move("c6", false);
+	input_move("e5", true);
+	input_move("Qa5", false);
+	input_move("c3", true);
+	input_move("e5", false);
+	input_move("f4", true);
+	input_move("Nf6", false);
+	input_move("e5", true);
+	input_move("Ng8", false);
+	input_move("Bg5", true);
+	input_move("f6", false);
+	input_move("b4", true);
+	input_move("Qb5", false);
+	input_move("Na3", true);
+	input_move("Qe5", false);
+	input_move("Bf4", true);
+	input_move("Qc3", false);
+	input_move("Qd2", true);
+	search_driver(false);
+
 }

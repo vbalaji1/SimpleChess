@@ -15,6 +15,7 @@ extern U64 bB;
 extern U64 bQ;
 extern U64 bK;
 
+extern bool is_opening;
 extern U64 p_enpassant;
 
 bool chk_mate(bool is_white);

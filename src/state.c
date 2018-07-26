@@ -2,6 +2,9 @@
 #include "bitboard.h"
 #include "mvgen.h"
 #include "pawn.h"
+#include "state.h"
+
+bool is_opening;
 
 bool chk_mate(bool is_white) {
 	U64 *p = bb_lookup(is_white, P);
@@ -200,7 +203,14 @@ char *mv_to_index(U64 mv, piece_t type) {
 	return move;
 }
 
+
 void input_move(char *mv, bool is_white) {
+	if (is_opening) {
+		if (strcmp(mv, "e4") == 0) {
+			book = 0;
+		}
+		
+	}
 	Vector *v = (Vector *) malloc(sizeof(Vector));
 	init_vector(v);
  	if (strcmp(mv, "O-O") == 0) {

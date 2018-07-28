@@ -205,12 +205,6 @@ char *mv_to_index(U64 mv, piece_t type) {
 
 
 void input_move(char *mv, bool is_white) {
-	if (is_opening) {
-		if (strcmp(mv, "e4") == 0) {
-			book = 0;
-		}
-		
-	}
 	Vector *v = (Vector *) malloc(sizeof(Vector));
 	init_vector(v);
  	if (strcmp(mv, "O-O") == 0) {

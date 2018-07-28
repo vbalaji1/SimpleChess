@@ -7,6 +7,8 @@
 
 U64 hashes[781];
 HashEntry transpositions[1299827];
+bool use_transpose;
+bool pc_display;
 
 void print_bits(U64 n, bool gridwise) {
 	U64 mask = 1;
@@ -51,6 +53,27 @@ void clean_vector(Vector *v) {
 	v->piece = NULL;
 }
 
+void piece_display() {
+	char file[] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
+	char rank[] = {'1', '2', '3', '4', '5', '6', '7', '8'};
+	U64 mask = 1;
+	U64 *k = bb_lookup(true, K);
+	U64 *q = bb_lookup(true, Q);
+	U64 *bshp = bb_lookup(true, B);
+	U64 *kn = bb_lookup(true, Kn);
+	U64 *rk = bb_lookup(true, R);
+	U64 *p = bb_lookup(true, P);
+	for (int i = 0; i < 64; i++) {
+		U64 occupied = (*k & (mask << i));
+		if (occupied) {
+			char sq[2];
+			sq[0] = file[i % 8];
+			sq[1] = rank[i / 8];
+			printf("WHITE KING | %c\n", sq);
+		}
+	}
+}
+
 void init_zobrist() {
 	for (int i = 0; i < 781; i++) {
 		hashes[i] = genrand64_int64();
@@ -66,11 +89,6 @@ void init_zobrist() {
 	}
 }
 
-void clean_zobrist() {
-	for (int i = 0; i < 1299827; i++) {
-		free(&transpositions[i]);
-	}
-}
 U64 zobrist_hash(bool is_white) {
 	U64 mask = 1;
 	U64 p = *(bb_lookup(is_white, P));

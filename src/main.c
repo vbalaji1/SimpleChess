@@ -49,46 +49,74 @@ void init_bitboards() {
 int main() {
 	init_bitboards();
 	char move[3];
-	/*while (true) {
-		printf("INPUT MOVE:\n");
-		scanf("%s", move);
-		if (strcmp(move, "end") == 0) {
-			break;
+	char *usr;
+	bool tp_setup = false;
+	do {
+		printf("USE TRANSPOSITION TABLE?\nYES : y\nNO: n\n");
+		scanf("%s", usr);
+		if (strcmp(usr, "y") == 0) {
+			use_transpose = true;
+			tp_setup = true;
+		} else if (strcmp(usr, "n") == 0) {
+			use_transpose = false;
+			tp_setup = true;
 		}
-		printf("INPUTTED: %s\n", move);
-		input_move(move, true);
-		search_driver(false);
-		printf("INPUT computer move: \n");
-		scanf("%s", move);
-		printf("INPUTTED: %s\n", move);
-		input_move(move, false);
-		//Fix RK_score
-		printf("RK_SCORE: %f\n", rk_score(false));
-		printf("P_SCORE: %f\n", p_score(false));
-	}*/
-	input_move("g3", true);
-	input_move("d6", false);
-	input_move("Bg2", true);
-	input_move("e5", false);
-	input_move("d4", true);
-	input_move("c6", false);
-	input_move("e5", true);
-	input_move("Qa5", false);
-	input_move("c3", true);
-	input_move("e5", false);
-	input_move("f4", true);
-	input_move("Nf6", false);
-	input_move("e5", true);
-	input_move("Ng8", false);
-	input_move("Bg5", true);
-	input_move("f6", false);
-	input_move("b4", true);
-	input_move("Qb5", false);
-	input_move("Na3", true);
-	input_move("Qe5", false);
-	input_move("Bf4", true);
-	input_move("Qc3", false);
-	input_move("Qd2", true);
-	search_driver(false);
+	} while (!tp_setup); 
 
+	bool pc_setup = false;
+	do {
+		printf("USE PIECE LOCATION DISPLAY?\nYES : y\nNO: n\n");
+		scanf("%s", usr);
+		if (strcmp(usr, "y") == 0) {
+			pc_display = true;
+			pc_setup = true;
+		} else if (strcmp(usr, "n") == 0) {
+			pc_display = false;
+			pc_setup = true;
+		}
+	} while (!pc_setup);
+
+	bool color_setup = false;
+	bool side;
+	do {
+		printf("PLAY BLACK OR WHITE?\nBLACK : b\nWHITE: w\n");
+		scanf("%s", usr);
+		if (strcmp(usr, "w") == 0) {
+			side = false;
+			color_setup = true;
+		} else if (strcmp(usr, "b") == 0) {
+			side = true;
+			color_setup = true;
+		}
+	} while (!color_setup);
+
+	printf("ENTER 'end' DURING YOUR MOVE TO END THE GAME\n");
+	if (side) {
+		while (true) {
+			search_driver(true);
+			printf("INPUT COMPUTER MOVE:\n");
+			scanf("%s", move);
+			input_move(move, true);
+			printf("INPUT YOUR MOVE:\n");
+			scanf("%s", move);
+			if (strcmp(move, "end") == 0) {
+				break;
+			}
+			input_move(move, false);
+		}
+	} else {
+		while (true) {
+			printf("INPUT YOUR MOVE:\n");
+			scanf("%s", move);
+			if (strcmp(move, "end") == 0) {
+				break;
+			}
+			input_move(move, true);
+			search_driver(false);
+			printf("INPUT COMPUTER MOVE:\n");
+			scanf("%s", move);
+			input_move(move, false);
+		}
+	}
+ 
 }

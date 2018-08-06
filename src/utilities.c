@@ -69,92 +69,136 @@ void piece_display() {
 	U64 *nkn = bb_lookup(false, Kn);
 	U64 *nrk = bb_lookup(false, R);
 	U64 *np = bb_lookup(false, P);
+
+	FILE *fp;
+	fp = fopen("../latest", "w+");
+	int total = 0;
+	char **pcs = (char **) malloc(sizeof(char *) * 64);
+	char **locations = (char **) malloc(sizeof(char *) * 64);
+	for (int i = 0; i < 64; i++) {
+		locations[i] = (char *) malloc(sizeof(char) * 4);
+		pcs[i] = (char *) malloc(sizeof(char) * 4);
+	}
 	for (int i = 0; i < 64; i++) {
 		U64 occupied = (*k & (mask << i));
 		if (occupied) {
 			char sq[2];
 			sq[0] = file[i % 8];
 			sq[1] = rank[i / 8];
-			printf("wK | %c%c\n", sq[0], sq[1]);
+			sprintf(pcs[total], "wK");
+			sprintf(locations[total], sq);
+			total++;
 		}
 		occupied = (*q & (mask << i));
 		if (occupied) {
 			char sq[2];
 			sq[0] = file[i % 8];
 			sq[1] = rank[i / 8];
-			printf("wQ | %c%c\n", sq[0], sq[1]);
+			sprintf(pcs[total], "wQ");
+			sprintf(locations[total], sq);
+			total++;
 		}
 		occupied = (*bshp & (mask << i));
 		if (occupied) {
 			char sq[2];
 			sq[0] = file[i % 8];
 			sq[1] = rank[i / 8];
-			printf("wB | %c%c\n", sq[0], sq[1]);
+			sprintf(pcs[total], "wB");
+			sprintf(locations[total], sq);
+			total++;
 		}
 		occupied = (*kn & (mask << i));
 		if (occupied) {
 			char sq[2];
 			sq[0] = file[i % 8];
 			sq[1] = rank[i / 8];
-			printf("wKn | %c%c\n", sq[0], sq[1]);
+			sprintf(pcs[total], "wKn");
+			sprintf(locations[total], sq);
+			total++;
 		}
 		occupied = (*rk & (mask << i));
 		if (occupied) {
 			char sq[2];
 			sq[0] = file[i % 8];
 			sq[1] = rank[i / 8];
-			printf("wR | %c%c\n", sq[0], sq[1]);
+			sprintf(pcs[total], "wR");
+			sprintf(locations[total], sq);
+			total++;
 		}
 		occupied = (*p & (mask << i));
 		if (occupied) {
 			char sq[2];
 			sq[0] = file[i % 8];
 			sq[1] = rank[i / 8];
-			printf("wP | %c%c\n", sq[0], sq[1]);
+			sprintf(pcs[total], "wP");
+			sprintf(locations[total], sq);
+			total++;
 		}
 		occupied = (*nk & (mask << i));
 		if (occupied) {
 			char sq[2];
 			sq[0] = file[i % 8];
 			sq[1] = rank[i / 8];
-			printf("bK | %c%c\n", sq[0], sq[1]);
+			sprintf(pcs[total], "bK");
+			sprintf(locations[total], sq);
+			total++;
 		}
 		occupied = (*nq & (mask << i));
 		if (occupied) {
 			char sq[2];
 			sq[0] = file[i % 8];
 			sq[1] = rank[i / 8];
-			printf("bQ | %c%c\n", sq[0], sq[1]);
+			sprintf(pcs[total], "bQ");
+			sprintf(locations[total], sq);
+			total++;
 		}
 		occupied = (*nbshp & (mask << i));
 		if (occupied) {
 			char sq[2];
 			sq[0] = file[i % 8];
 			sq[1] = rank[i / 8];
-			printf("bB | %c%c\n", sq[0], sq[1]);
+			sprintf(pcs[total], "bB");
+			sprintf(locations[total], sq);
+			total++;
 		}
 		occupied = (*nkn & (mask << i));
 		if (occupied) {
 			char sq[2];
 			sq[0] = file[i % 8];
 			sq[1] = rank[i / 8];
-			printf("bKn | %c%c\n", sq[0], sq[1]);
+			sprintf(pcs[total], "bKn");
+			sprintf(locations[total], sq);
+			total++;
 		}
 		occupied = (*nrk & (mask << i));
 		if (occupied) {
 			char sq[2];
 			sq[0] = file[i % 8];
 			sq[1] = rank[i / 8];
-			printf("bR | %c%c\n", sq[0], sq[1]);
+			sprintf(pcs[total], "bR");
+			sprintf(locations[total], sq);
+			total++;
 		}
 		occupied = (*np & (mask << i));
 		if (occupied) {
 			char sq[2];
 			sq[0] = file[i % 8];
 			sq[1] = rank[i / 8];
-			printf("bP | %c%c\n", sq[0], sq[1]);
+			sprintf(pcs[total], "bP");
+			sprintf(locations[total], sq);
+			total++;
 		}
 	}
+	for (int i = 0; i < total; i++) {
+		fprintf(fp, "%s;", pcs[i]);
+	}
+	fprintf(fp, "\n");
+	for (int i = 0; i < total; i++) {
+		fprintf(fp, "%s;", locations[i]);
+	}
+	//free(pcs);
+	//free(locations);
+	fclose(fp);
 }
 
 void init_zobrist() {

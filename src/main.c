@@ -113,6 +113,9 @@ int main() {
 			}
 			input_move(move, true);
 			search_driver(false);
+			if (piece_display) {
+				piece_display();
+			}
 			printf("INPUT COMPUTER MOVE:\n");
 			scanf("%s", move);
 			input_move(move, false);

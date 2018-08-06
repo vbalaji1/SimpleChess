@@ -196,8 +196,12 @@ void piece_display() {
 	for (int i = 0; i < total; i++) {
 		fprintf(fp, "%s;", locations[i]);
 	}
-	//free(pcs);
-	//free(locations);
+	for (int i = 0; i < 64; i++) {
+		free(pcs[i]);
+		free(locations[i]);
+	}
+	free(pcs);
+	free(locations);
 	fclose(fp);
 }
 

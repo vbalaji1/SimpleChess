@@ -98,11 +98,18 @@ int main() {
 			scanf("%s", move);
 			input_move(move, true);
 			printf("INPUT YOUR MOVE:\n");
+			if (piece_display) {
+				piece_display();
+			}
 			scanf("%s", move);
 			if (strcmp(move, "end") == 0) {
+				remove("../latest");
 				break;
 			}
 			input_move(move, false);
+			if (piece_display) {
+				piece_display();
+			}
 		}
 	} else {
 		while (true) {

@@ -593,12 +593,12 @@ void search_driver(bool is_white) {
 	free(v);
 	free(vq_castle);
 	free(vk_castle);
-	//clean_zobrist();
 
+	char *prefix[] = {"Pawn", "Rook", "Knight", "Bishop", "Queen", "King"};
 	print_bits(best_mv, true);
 	printf("%s\n", mv_to_index(best_mv, type));
-	printf("PIECE: %d\n", type);
-	printf("ORIGIN: %d\n", origin);
+	printf("PIECE: %s\n", prefix[type]);
+	printf("ORIGIN: %s\n", index_to_sq(origin));
 	printf("SCORE: %f\n", max_score);
 
 }

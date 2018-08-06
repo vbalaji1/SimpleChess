@@ -203,6 +203,14 @@ char *mv_to_index(U64 mv, piece_t type) {
 	return move;
 }
 
+char *index_to_sq(int index) {
+	char file[] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
+	char rank[] = {'1', '2', '3', '4', '5', '6', '7', '8'};
+	static char sq[2];
+	sq[0] = file[index % 8];
+	sq[1] = rank[index / 8];
+	return sq;
+}
 
 void input_move(char *mv, bool is_white) {
 	Vector *v = (Vector *) malloc(sizeof(Vector));

@@ -63,13 +63,96 @@ void piece_display() {
 	U64 *kn = bb_lookup(true, Kn);
 	U64 *rk = bb_lookup(true, R);
 	U64 *p = bb_lookup(true, P);
+	U64 *nk = bb_lookup(false, K);
+	U64 *nq = bb_lookup(false, Q);
+	U64 *nbshp = bb_lookup(false, B);
+	U64 *nkn = bb_lookup(false, Kn);
+	U64 *nrk = bb_lookup(false, R);
+	U64 *np = bb_lookup(false, P);
 	for (int i = 0; i < 64; i++) {
 		U64 occupied = (*k & (mask << i));
 		if (occupied) {
 			char sq[2];
 			sq[0] = file[i % 8];
 			sq[1] = rank[i / 8];
-			printf("WHITE KING | %c\n", sq);
+			printf("wK | %c%c\n", sq[0], sq[1]);
+		}
+		occupied = (*q & (mask << i));
+		if (occupied) {
+			char sq[2];
+			sq[0] = file[i % 8];
+			sq[1] = rank[i / 8];
+			printf("wQ | %c%c\n", sq[0], sq[1]);
+		}
+		occupied = (*bshp & (mask << i));
+		if (occupied) {
+			char sq[2];
+			sq[0] = file[i % 8];
+			sq[1] = rank[i / 8];
+			printf("wB | %c%c\n", sq[0], sq[1]);
+		}
+		occupied = (*kn & (mask << i));
+		if (occupied) {
+			char sq[2];
+			sq[0] = file[i % 8];
+			sq[1] = rank[i / 8];
+			printf("wKn | %c%c\n", sq[0], sq[1]);
+		}
+		occupied = (*rk & (mask << i));
+		if (occupied) {
+			char sq[2];
+			sq[0] = file[i % 8];
+			sq[1] = rank[i / 8];
+			printf("wR | %c%c\n", sq[0], sq[1]);
+		}
+		occupied = (*p & (mask << i));
+		if (occupied) {
+			char sq[2];
+			sq[0] = file[i % 8];
+			sq[1] = rank[i / 8];
+			printf("wP | %c%c\n", sq[0], sq[1]);
+		}
+		occupied = (*nk & (mask << i));
+		if (occupied) {
+			char sq[2];
+			sq[0] = file[i % 8];
+			sq[1] = rank[i / 8];
+			printf("bK | %c%c\n", sq[0], sq[1]);
+		}
+		occupied = (*nq & (mask << i));
+		if (occupied) {
+			char sq[2];
+			sq[0] = file[i % 8];
+			sq[1] = rank[i / 8];
+			printf("bQ | %c%c\n", sq[0], sq[1]);
+		}
+		occupied = (*nbshp & (mask << i));
+		if (occupied) {
+			char sq[2];
+			sq[0] = file[i % 8];
+			sq[1] = rank[i / 8];
+			printf("bB | %c%c\n", sq[0], sq[1]);
+		}
+		occupied = (*nkn & (mask << i));
+		if (occupied) {
+			char sq[2];
+			sq[0] = file[i % 8];
+			sq[1] = rank[i / 8];
+			printf("bKn | %c%c\n", sq[0], sq[1]);
+		}
+		occupied = (*nrk & (mask << i));
+		if (occupied) {
+			char sq[2];
+			sq[0] = file[i % 8];
+			sq[1] = rank[i / 8];
+			printf("bR | %c%c\n", sq[0], sq[1]);
+		}
+		occupied = (*np & (mask << i));
+		if (occupied) {
+			char sq[2];
+			sq[0] = file[i % 8];
+			sq[1] = rank[i / 8];
+			printf("bP | %c%c\n", sq[0], sq[1]);
 		}
 	}
 }

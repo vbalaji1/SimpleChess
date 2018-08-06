@@ -91,6 +91,9 @@ int main() {
 	} while (!color_setup);
 
 	printf("ENTER 'end' DURING YOUR MOVE TO END THE GAME\n");
+	if (pc_display) {
+		piece_display();
+	}
 	if (side) {
 		while (true) {
 			search_driver(true);
@@ -98,7 +101,7 @@ int main() {
 			scanf("%s", move);
 			input_move(move, true);
 			printf("INPUT YOUR MOVE:\n");
-			if (piece_display) {
+			if (pc_display) {
 				piece_display();
 			}
 			scanf("%s", move);
@@ -107,7 +110,7 @@ int main() {
 				break;
 			}
 			input_move(move, false);
-			if (piece_display) {
+			if (pc_display) {
 				piece_display();
 			}
 		}
@@ -120,14 +123,14 @@ int main() {
 				break;
 			}
 			input_move(move, true);
-			if (piece_display) {
+			if (pc_display) {
 				piece_display();
 			}
 			search_driver(false);
 			printf("INPUT COMPUTER MOVE:\n");
 			scanf("%s", move);
 			input_move(move, false);
-			if (piece_display) {
+			if (pc_display) {
 				piece_display();
 			}
 		}

@@ -71,13 +71,13 @@ void piece_display() {
 	U64 *np = bb_lookup(false, P);
 
 	FILE *fp;
-	fp = fopen("../latest", "w+");
+	fp = fopen("../latest", "w");
 	int total = 0;
 	char **pcs = (char **) malloc(sizeof(char *) * 64);
 	char **locations = (char **) malloc(sizeof(char *) * 64);
 	for (int i = 0; i < 64; i++) {
-		locations[i] = (char *) malloc(sizeof(char) * 4);
-		pcs[i] = (char *) malloc(sizeof(char) * 4);
+		locations[i] = (char *) malloc(sizeof(char) * 2);
+		pcs[i] = (char *) malloc(sizeof(char) * 2);
 	}
 	for (int i = 0; i < 64; i++) {
 		U64 occupied = (*k & (mask << i));
@@ -86,7 +86,7 @@ void piece_display() {
 			sq[0] = file[i % 8];
 			sq[1] = rank[i / 8];
 			sprintf(pcs[total], "wK");
-			sprintf(locations[total], sq);
+			sprintf(locations[total], "%c%c", sq[0], sq[1]);
 			total++;
 		}
 		occupied = (*q & (mask << i));
@@ -95,7 +95,7 @@ void piece_display() {
 			sq[0] = file[i % 8];
 			sq[1] = rank[i / 8];
 			sprintf(pcs[total], "wQ");
-			sprintf(locations[total], sq);
+			sprintf(locations[total], "%c%c", sq[0], sq[1]);
 			total++;
 		}
 		occupied = (*bshp & (mask << i));
@@ -104,7 +104,7 @@ void piece_display() {
 			sq[0] = file[i % 8];
 			sq[1] = rank[i / 8];
 			sprintf(pcs[total], "wB");
-			sprintf(locations[total], sq);
+			sprintf(locations[total], "%c%c", sq[0], sq[1]);
 			total++;
 		}
 		occupied = (*kn & (mask << i));
@@ -113,7 +113,7 @@ void piece_display() {
 			sq[0] = file[i % 8];
 			sq[1] = rank[i / 8];
 			sprintf(pcs[total], "wKn");
-			sprintf(locations[total], sq);
+			sprintf(locations[total], "%c%c", sq[0], sq[1]);
 			total++;
 		}
 		occupied = (*rk & (mask << i));
@@ -122,7 +122,7 @@ void piece_display() {
 			sq[0] = file[i % 8];
 			sq[1] = rank[i / 8];
 			sprintf(pcs[total], "wR");
-			sprintf(locations[total], sq);
+			sprintf(locations[total], "%c%c", sq[0], sq[1]);
 			total++;
 		}
 		occupied = (*p & (mask << i));
@@ -131,7 +131,7 @@ void piece_display() {
 			sq[0] = file[i % 8];
 			sq[1] = rank[i / 8];
 			sprintf(pcs[total], "wP");
-			sprintf(locations[total], sq);
+			sprintf(locations[total], "%c%c", sq[0], sq[1]);
 			total++;
 		}
 		occupied = (*nk & (mask << i));
@@ -140,7 +140,7 @@ void piece_display() {
 			sq[0] = file[i % 8];
 			sq[1] = rank[i / 8];
 			sprintf(pcs[total], "bK");
-			sprintf(locations[total], sq);
+			sprintf(locations[total], "%c%c", sq[0], sq[1]);
 			total++;
 		}
 		occupied = (*nq & (mask << i));
@@ -149,7 +149,7 @@ void piece_display() {
 			sq[0] = file[i % 8];
 			sq[1] = rank[i / 8];
 			sprintf(pcs[total], "bQ");
-			sprintf(locations[total], sq);
+			sprintf(locations[total], "%c%c", sq[0], sq[1]);
 			total++;
 		}
 		occupied = (*nbshp & (mask << i));
@@ -158,7 +158,7 @@ void piece_display() {
 			sq[0] = file[i % 8];
 			sq[1] = rank[i / 8];
 			sprintf(pcs[total], "bB");
-			sprintf(locations[total], sq);
+			sprintf(locations[total], "%c%c", sq[0], sq[1]);
 			total++;
 		}
 		occupied = (*nkn & (mask << i));
@@ -167,7 +167,7 @@ void piece_display() {
 			sq[0] = file[i % 8];
 			sq[1] = rank[i / 8];
 			sprintf(pcs[total], "bKn");
-			sprintf(locations[total], sq);
+			sprintf(locations[total], "%c%c", sq[0], sq[1]);
 			total++;
 		}
 		occupied = (*nrk & (mask << i));
@@ -176,7 +176,7 @@ void piece_display() {
 			sq[0] = file[i % 8];
 			sq[1] = rank[i / 8];
 			sprintf(pcs[total], "bR");
-			sprintf(locations[total], sq);
+			sprintf(locations[total], "%c%c", sq[0], sq[1]);
 			total++;
 		}
 		occupied = (*np & (mask << i));
@@ -185,7 +185,7 @@ void piece_display() {
 			sq[0] = file[i % 8];
 			sq[1] = rank[i / 8];
 			sprintf(pcs[total], "bP");
-			sprintf(locations[total], sq);
+			sprintf(locations[total], "%c%c", sq[0], sq[1]);
 			total++;
 		}
 	}

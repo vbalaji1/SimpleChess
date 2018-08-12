@@ -1,5 +1,6 @@
 CC=gcc
-CFLAGS=-I$(IDIR) -lm
+CFLAGS=-I$(IDIR) 
+LDFLAGS=-lm
 
 IDIR=../include
 ODIR=obj
@@ -11,10 +12,10 @@ _OBJ = main.o utilities.o bitboard.o pawn.o mvgen.o state.o evaluate.o search.o 
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: %.c $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS)
+	$(CC) -c -o $@ $< $(CFLAGS) $(LDFLAGS)
 
 viper: $(OBJ)
-	$(CC) -o $@ $^ $(CFLAGS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS)
 	./viper
 
 .PHONY: clean

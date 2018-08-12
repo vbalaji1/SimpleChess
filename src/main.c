@@ -101,13 +101,14 @@ int main() {
 				piece_display();
 			}
 			printf("INPUT YOUR MOVE:\n");
-			if (pc_display) {
-				piece_display();
-			}
 			scanf("%s", move);
 			if (strcmp(move, "end") == 0) {
 				remove("../latest");
 				break;
+			}
+			input_move(move, false);
+			if (pc_display) {
+				piece_display();
 			}
 		}
 	} else {

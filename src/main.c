@@ -49,7 +49,7 @@ void init_bitboards() {
 int main() {
 	init_bitboards();
 	char move[3];
-	char *usr;
+	char usr[1];
 	bool tp_setup = false;
 	do {
 		printf("USE TRANSPOSITION TABLE?\nYES : y\nNO: n\n");
@@ -97,9 +97,6 @@ int main() {
 	if (side) {
 		while (true) {
 			search_driver(true);
-			printf("INPUT COMPUTER MOVE:\n");
-			scanf("%s", move);
-			input_move(move, true);
 			printf("INPUT YOUR MOVE:\n");
 			if (pc_display) {
 				piece_display();
@@ -109,7 +106,6 @@ int main() {
 				remove("../latest");
 				break;
 			}
-			input_move(move, false);
 			if (pc_display) {
 				piece_display();
 			}
@@ -127,13 +123,9 @@ int main() {
 				piece_display();
 			}
 			search_driver(false);
-			printf("INPUT COMPUTER MOVE:\n");
-			scanf("%s", move);
-			input_move(move, false);
 			if (pc_display) {
 				piece_display();
 			}
 		}
 	}
- 
 }

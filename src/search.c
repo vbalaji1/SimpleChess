@@ -594,6 +594,7 @@ void search_driver(bool is_white) {
 	free(vq_castle);
 	free(vk_castle);
 
+	mk_move(best_mv, origin, is_white, type);
 	char *prefix[] = {"Pawn", "Rook", "Knight", "Bishop", "Queen", "King"};
 	print_bits(best_mv, true);
 	printf("%s\n", mv_to_index(best_mv, type));

@@ -16,7 +16,8 @@ $(ODIR)/%.o: %.c $(DEPS)
 
 viper: $(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS)
-	./viper
+	rm obj/*
+	rm viper
 
 .PHONY: clean
 

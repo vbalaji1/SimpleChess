@@ -97,6 +97,9 @@ int main() {
 	if (side) {
 		while (true) {
 			search_driver(true);
+			if (pc_display) {
+				piece_display();
+			}
 			printf("INPUT YOUR MOVE:\n");
 			if (pc_display) {
 				piece_display();
@@ -105,9 +108,6 @@ int main() {
 			if (strcmp(move, "end") == 0) {
 				remove("../latest");
 				break;
-			}
-			if (pc_display) {
-				piece_display();
 			}
 		}
 	} else {
